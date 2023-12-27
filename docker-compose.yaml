@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  api-erp:
+    container_name: api-erp
+    image: api-erp
+    hostname: api-erp
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    ports:
+      - "8080:80"
+    restart: "always"
+    command: yarn start
