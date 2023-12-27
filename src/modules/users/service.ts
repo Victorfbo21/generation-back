@@ -1,6 +1,8 @@
 import CreateUserInterface from "./Interfaces/create-user.interface";
 import UserRepository from "./repository";
 import UserSchema from "./schema"
+import encodePassword from "../../infra/utils/encodePassword";
+
 export default class UserService {
 
     private userRepository: UserRepository
@@ -18,8 +20,9 @@ export default class UserService {
             const userToCreate = {
                 name: user.name,
                 email: user.email,
+                password: encodePassword(user.password),
                 whatsapp: user.whatsapp,
-                site: user.site
+                type: user.type
             }
 
             const created = await this.userRepository.createUser(userToCreate)
@@ -29,6 +32,7 @@ export default class UserService {
             return created
         }
         const userId = userExists?._id
+        user.password = encodePassword(user.password)
         const updated = await this.userRepository.updateUser(user, userId)
 
         if (!updated)

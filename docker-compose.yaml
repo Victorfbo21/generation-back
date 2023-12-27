@@ -1,15 +1,15 @@
 version: "3.3"
 
 services:
-  api-erp:
-    container_name: api-erp
-    image: api-erp
-    hostname: api-erp
+  generation-api:
+    container_name: generation-api
+    image: generation-api
+    hostname: generation-api
     build:
       context: .
       dockerfile: Dockerfile
       target: base
     ports:
-      - "8080:80"
+      - "8080:8080"
     restart: "always"
     command: yarn start

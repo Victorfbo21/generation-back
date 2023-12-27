@@ -31,6 +31,14 @@ class UsersController {
 
         res.status(200).json(result)
     }
+
+    async recoveryPassword(req: any, res: Response) {
+        const { user } = req
+    }
+
+    async updatePassword(req: Request, res: Response) {
+        const { password, code } = req.body
+    }
 }
 
 export { UsersController }

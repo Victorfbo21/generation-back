@@ -1,18 +1,16 @@
 import mongoose from "mongoose";
 
-const type = ["owner", "admin"]
-
-const UserSchema = new mongoose.Schema({
+const WorkerSchema = new mongoose.Schema({
     name: { type: String },
     email: { type: String },
     password: { type: String, require: true },
     profile_imagem: { type: String },
     whatsapp: { type: String },
-    type: { type: String, enum: type, default: "owner" },
+    function: { type: String }
 }, {
     timestamps: true
 })
 
-const User = mongoose.model('User', UserSchema)
+const Worker = mongoose.model('Worker', WorkerSchema)
 
-export default User
+export default Worker

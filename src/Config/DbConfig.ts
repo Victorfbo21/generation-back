@@ -17,7 +17,7 @@ const dbConnect = () => {
 
     ).then(
         () => {
-            console.log('Connected to', MONGO_URL)
+            console.log('Conectado ao Banco Generation')
             return true
         }
     ).catch(

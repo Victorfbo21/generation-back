@@ -16,7 +16,7 @@ export default class UserRepository {
 
     async updateUser(update: Partial<CreateUserInterface>, userId: any) {
         try {
-            const updatedUser = await UserSchema.findByIdAndDelete(userId, update)
+            const updatedUser = await UserSchema.findByIdAndUpdate(userId, update)
 
             return updatedUser
         }
