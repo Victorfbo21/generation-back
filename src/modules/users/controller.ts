@@ -33,7 +33,14 @@ class UsersController {
     }
 
     async recoveryPassword(req: any, res: Response) {
-        const { user } = req
+        const { email } = req.body
+
+        const result = await this.usersService.passwordRecovery(email)
+
+        if (!result)
+            res.status(500).json({ message: "Error on Send RecoveryLink" })
+
+        res.status(200).json(result)
     }
 
     async updatePassword(req: Request, res: Response) {

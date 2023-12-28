@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
     profile_imagem: { type: String },
     whatsapp: { type: String },
     type: { type: String, enum: type, default: "owner" },
+    isDeleted: { type: Boolean, default: false }
 }, {
     timestamps: true
 })

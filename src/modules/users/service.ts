@@ -60,5 +60,17 @@ export default class UserService {
 
         return users
     }
+
+    async passwordRecovery(email: string) {
+
+        const user = await this.userRepository.getUsers(email, 0, 0)
+
+        if (!user)
+            throw new Error("Erro ao Encontrar Usuário")
+        // TODO TERMINAR METODO DE RECURAR SENHA
+        return user
+    }
+
+
 }
 

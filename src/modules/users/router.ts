@@ -13,6 +13,10 @@ UsersRouter.put('/update', (req, res) => {
     return usersController.upSert(req, res)
 })
 
+UsersRouter.post('/passsword-recovery', (req, res) => {
+    return usersController.recoveryPassword(req, res)
+})
+
 UsersRouter.get('/:id', authMiddleware, (req, res) => {
     return usersController.getUserById(req, res)
 })

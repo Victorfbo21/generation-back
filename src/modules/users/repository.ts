@@ -37,6 +37,39 @@ export default class UserRepository {
         }
     }
 
+    async getUsers(filter: string, skip: any, limit: any) {
+        try {
+            filter = filter || ""
+            return UserSchema.find({
+                $or: [
+                    { email: new RegExp('.*' + filter + '.*', 'i') },
+                    { name: new RegExp('.*' + filter + '.*', 'i') },
+                    { whatsapp: new RegExp('.*' + filter + '.*', 'i') }
+                ],
+                $and: [
+                    { isDeleted: false }
+                ]
+            })
+                .skip(skip || 0)
+                .limit(limit || 0)
+                .then(
+                    (o) => {
+                        return o
+                    }
+                )
+                .catch(
+                    (e) => {
+                        console.log("Error Finding Users")
+                        return null
+                    }
+                )
+        }
+        catch (err) {
+            console.log(err)
+            return err
+        }
+    }
+
     async getAllUsers() {
         try {
             const users = await UserSchema.find()
