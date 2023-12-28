@@ -1,8 +1,21 @@
+import { ICreatePasswordRecovery } from './interfaces/create-password-recovery.interface';
 import PasswordRecovery from "./schema";
-
 export default class PasswordRecoveryRepository {
 
     constructor() {
+    }
+
+
+    async createPasswordRecovery(data: ICreatePasswordRecovery) {
+        try {
+            const created = await PasswordRecovery.create(data)
+
+            return created
+        }
+        catch (err) {
+            console.log(err)
+            return err
+        }
     }
 
     async getLastRecoveryByUserId(userId: string) {

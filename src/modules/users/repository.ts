@@ -1,5 +1,6 @@
 import UserSchema from "./schema"
 import CreateUserInterface from "./Interfaces/create-user.interface"
+import { IUser } from "./Interfaces/user.interface"
 
 export default class UserRepository {
 
@@ -37,7 +38,7 @@ export default class UserRepository {
         }
     }
 
-    async getUsers(filter: string, skip: any, limit: any) {
+    async getUsers(filter: string, skip: any, limit: any): Promise<any> {
         try {
             filter = filter || ""
             return UserSchema.find({
@@ -58,7 +59,7 @@ export default class UserRepository {
                     }
                 )
                 .catch(
-                    (e) => {
+                    (e: any) => {
                         console.log("Error Finding Users")
                         return null
                     }
