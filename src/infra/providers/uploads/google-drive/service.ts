@@ -8,7 +8,6 @@ import {
 } from "../interfaces/IUploadService.interface";
 import { Readable } from "stream";
 import './google.json'
-import GoogleDrive from './google.json'
 
 export default class GoogleDriveService implements IUploadService {
 
