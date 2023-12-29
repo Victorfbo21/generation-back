@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/infra/http/server.ts",
-    "dev": "ts-node-dev src/infra/http/server.ts --inspect"
+    "dev": "nodemon src/infra/http/server.ts --inspect"
   },
   "author": "",
   "license": "ISC",

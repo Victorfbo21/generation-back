@@ -16,7 +16,7 @@ export default class AuthController {
         const result = await this.authService.login({ email, password })
 
         if (result.error)
-            return res.status(500).json(result)
+            return res.status(result.status).json(result)
 
         return res.status(200).json(result)
     }

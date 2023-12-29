@@ -20,6 +20,7 @@ export default class AuthService {
             return {
                 data: null,
                 error: true,
+                status: 401,
                 message: "Usuário não Encontrado na Base de Dados"
             }
         }
@@ -30,6 +31,7 @@ export default class AuthService {
             return {
                 data: null,
                 error: true,
+                status: 401,
                 message: "Senha Inválida"
             }
         }
@@ -45,6 +47,7 @@ export default class AuthService {
             return {
                 data: null,
                 error: true,
+                status: 500,
                 message: "Erro ao Gerar Tokens de Autenticação"
             }
         }
@@ -62,7 +65,8 @@ export default class AuthService {
                 refreshToken: tokens.refreshToken,
                 valid_at: validDate
             },
-            error: true,
+            error: false,
+            status: 201,
             message: "Usuário Logado com Sucesso!"
 
         }
