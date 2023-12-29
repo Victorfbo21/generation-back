@@ -15,6 +15,7 @@ export default class UserService {
     private resendSenderService: ResendSenderService
     private passwordRecoveryRepository: PasswordRecoveryRepository
     private googleDriveService: GoogleDriveService
+    private allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
 
     constructor() {
         this.userRepository = new UserRepository();
@@ -134,6 +135,14 @@ export default class UserService {
                 message: "Imagem não enviada"
             }
         }
+
+        if (!this.allowedTypes.includes(updateData.file.mimetype))
+            return {
+                data: null,
+                error: true,
+                status: 400,
+                message: "Tipo de Imagem não Suportado"
+            }
 
         const uploadImageData = {
             filename: updateData.file.name,
