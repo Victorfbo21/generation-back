@@ -7,5 +7,6 @@ export interface IUser {
     profile_imagem: string,
     whatsapp: string,
     type: string,
+    function?: string,
     isDeleted: boolean
 }
