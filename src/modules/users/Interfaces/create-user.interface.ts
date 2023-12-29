@@ -3,5 +3,6 @@ export default interface CreateUserInterface {
     whatsapp: string,
     email: string,
     password: string,
-    type: string
+    type: string,
+    function?: string | null
 }

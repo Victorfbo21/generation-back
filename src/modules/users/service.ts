@@ -25,13 +25,19 @@ export default class UserService {
 
         if (!userExists) {
 
-            const userToCreate = {
+            const isWorker = user.type === 'worker'
+
+            const commonData = {
                 name: user.name,
                 email: user.email,
                 password: encodePassword(user.password),
                 whatsapp: user.whatsapp,
                 type: user.type
             }
+
+            let userToCreate
+
+            isWorker ? userToCreate = { ...commonData, function: user.function } : userToCreate = { ...commonData }
 
             const created = await this.userRepository.createUser(userToCreate)
             if (!created)

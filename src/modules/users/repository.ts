@@ -1,6 +1,5 @@
 import UserSchema from "./schema"
 import CreateUserInterface from "./Interfaces/create-user.interface"
-import { IUser } from "./Interfaces/user.interface"
 
 export default class UserRepository {
 
