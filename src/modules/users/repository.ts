@@ -38,6 +38,17 @@ export default class UserRepository {
         }
     }
 
+    async getUserByEmail(email: string): Promise<any> {
+        try {
+            const user = await UserSchema.findOne({ email: email })
+
+            return user
+        }
+        catch (err) {
+            return false
+        }
+    }
+
     async getUsers(filter: string, skip: any, limit: any): Promise<any> {
         try {
             filter = filter || ""

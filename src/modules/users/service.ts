@@ -6,6 +6,7 @@ import ResendSenderService from "../../infra/providers/emails/resend/service";
 import { generateRandomCode } from "../../infra/utils/generateRandomCode";
 import PasswordRecovery from "../password-recovery/schema";
 import PasswordRecoveryRepository from "../password-recovery/repository";
+import { IPromiseInterface } from "./Interfaces/promises.interface";
 export default class UserService {
 
     private userRepository: UserRepository
@@ -68,16 +69,20 @@ export default class UserService {
         return users
     }
 
-    async passwordRecovery(email: string) {
+    async passwordRecovery(email: string): Promise<IPromiseInterface> {
 
-        const user = await this.userRepository.getUsers(email, 0, 0)
+        const user = await this.userRepository.getUserByEmail(email)
+
+        if (!user)
+            return {
+                data: null,
+                error: true,
+                message: "Usuário não encontrado na base de dados"
+            }
 
         const today = new Date();
         today.setMinutes(today.getMinutes() + 40);
         const limit = today.toISOString();
-
-        if (!user)
-            throw new Error("Erro ao Encontrar Usuário")
 
         const randomCode = generateRandomCode()
 
@@ -103,7 +108,11 @@ export default class UserService {
         if (!recovery)
             throw new Error("Erro ao Criar Recuperação de Senha")
 
-        return recovery
+        return {
+            data: recovery,
+            error: false,
+            message: "Recuperação Criada Com Sucesso!"
+        }
     }
 
 
