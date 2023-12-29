@@ -16,20 +16,13 @@ export default class GoogleDriveService implements IUploadService {
     private google_api_client_email: string
     private google_api_private_key: string
     private google_api_universe_domain: string
-    private google_api_type: string
-    private google_api_projectid: string
-    private google_api_clientid: string
-    private google_api_token_url: string
+
 
     constructor() {
         this.google_api_folder = process.env.GOOGLE_API_FOLDER || ""
         this.google_api_client_email = process.env.GOOGLE_API_CLIENT_EMAIL || ""
         this.google_api_private_key = process.env.GOOGLE_API_PRIVATE_KEY || ""
         this.google_api_universe_domain = process.env.GOOGLE_API_UNIVERSE_DOMAIN || ""
-        this.google_api_type = process.env.GOOGLE_API_TYPE || ""
-        this.google_api_projectid = process.env.GOOGLE_API_PROJECTID || ""
-        this.google_api_clientid = process.env.GOOGLE_API_CLIENTID || ""
-        this.google_api_token_url = process.env.GOOGLE_API_TOKEN_URL || ""
     }
 
     async uploadFile(params: IUploadFileParams): Promise<IUploadFileResponse> {
