@@ -5,11 +5,12 @@ export interface IUploadFileInfo {
 }
 
 export interface IUploadFileParams {
-    filename: string, //path junto com filename ex: id/photo.jpg
+    filename?: string, //path junto com filename ex: id/photo.jpg
     fileData: any
 }
 export interface IUploadFileResponse {
-    fileURL: string,
+    fileURL: string | null,
+    error: boolean
 }
 export interface IDownloadFileResponse {
     fileData: string,

@@ -46,6 +46,24 @@ class UsersController {
     async updatePassword(req: Request, res: Response) {
         const { password, code } = req.body
     }
+
+    async updateProfileImage(req: any, res: Response) {
+        const { user, files } = req
+
+        const updateData = {
+            userId: user.id,
+            file: files?.profile
+        }
+
+        const result = await this.usersService.updateProfileImage(updateData)
+
+        if (result.error) {
+            return res.status(500).json(result)
+        }
+
+        return res.status(200).json(result)
+
+    }
 }
 
 export { UsersController }

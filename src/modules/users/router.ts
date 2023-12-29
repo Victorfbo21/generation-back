@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { UsersController } from "./controller"
 import { authMiddleware } from "../../infra/http/middlewares/auth.middleware";
+import { Request, Response } from "express";
 
 const UsersRouter = Router();
 
@@ -15,6 +16,10 @@ UsersRouter.put('/update', (req, res) => {
 
 UsersRouter.post('/passsword-recovery', (req, res) => {
     return usersController.recoveryPassword(req, res)
+})
+
+UsersRouter.put('/profile-image', authMiddleware, (req: Request, res: Response) => {
+    return usersController.updateProfileImage(req, res)
 })
 
 UsersRouter.get('/:id', authMiddleware, (req, res) => {

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/infra/http/server.ts",
-    "dev": "nodemon  src/infra/http/server.ts --inspect"
+    "dev": "ts-node-dev src/infra/http/server.ts --inspect"
   },
   "author": "",
   "license": "ISC",
@@ -19,8 +19,10 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.2",
+    "googleapis": "^129.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.3",
+    "promisify": "^0.0.3",
     "pug": "^3.0.2",
     "react-email": "1.10.0",
     "resend": "^2.1.0",
