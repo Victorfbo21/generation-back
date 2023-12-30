@@ -25,6 +25,15 @@ export default class AuthService {
             }
         }
 
+        if (user.isDeleted) {
+            return {
+                data: null,
+                error: true,
+                status: 401,
+                message: "Usuário Já Deletado"
+            }
+        }
+
         const verifyPassword = await bcrypt.compare(loginData.password, user.password ?? "")
 
         if (!verifyPassword) {
@@ -57,9 +66,21 @@ export default class AuthService {
         const validDate = new Date(today.getTime());
         validDate.setHours(validDate.getHours() + toHour);
 
+        const userToReturn = {
+            name: user.name,
+            email: user.email,
+            whatsapp: user.whatsapp,
+            type: user.type,
+            isDeleted: user.type,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            function: user.function,
+            profile_image: user.profile_image
+        }
+
         return {
             data: {
-                user: user,
+                user: userToReturn,
                 status: 'Logged in',
                 accessToken: tokens.accessToken,
                 refreshToken: tokens.refreshToken,

@@ -3,9 +3,9 @@ import jwt, { Secret } from 'jsonwebtoken'
 
 export default class TokenService {
 
-    secret: Secret;
-    tokenLife: string | undefined
-    refreshTokenLife: string | undefined
+    private secret: Secret;
+    private tokenLife: string | undefined
+    private refreshTokenLife: string | undefined
 
     constructor() {
         this.secret = process.env.TOKEN_APP_SECRET || ""
@@ -13,14 +13,11 @@ export default class TokenService {
         this.refreshTokenLife = process.env.TOKEN_EXPIRATION
     }
 
-
-
     async getToken(tokenData: ITokenRequestInterface) {
 
         const accessToken = jwt.sign(tokenData, this.secret, { expiresIn: this.tokenLife })
 
         const refreshToken = jwt.sign(tokenData, this.secret, { expiresIn: this.refreshTokenLife })
-
 
         return {
             accessToken,

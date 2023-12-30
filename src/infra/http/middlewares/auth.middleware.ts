@@ -51,7 +51,11 @@ async function authMiddleware(
     } catch (err) {
         return response
             .status(401)
-            .json({ error: true, code: "token.expired", message: "Token invalid." });
+            .json({
+                error: true,
+                code: "token.expired",
+                message: "Token invalid."
+            });
     }
 }
 

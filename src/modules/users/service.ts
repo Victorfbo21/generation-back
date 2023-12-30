@@ -132,6 +132,7 @@ export default class UserService {
             return {
                 data: null,
                 error: true,
+                status: 400,
                 message: "Imagem não enviada"
             }
         }
@@ -155,6 +156,7 @@ export default class UserService {
             return {
                 data: null,
                 error: true,
+                status: 500,
                 message: "Erro ao Fazer Upload Da Imagem"
             }
         }
@@ -165,12 +167,14 @@ export default class UserService {
             return {
                 data: null,
                 error: true,
+                status: 500,
                 message: "Problemas Ao Salvar Imagem de Perfil"
             }
 
         return {
             data: null,
             error: false,
+            status: 200,
             message: "Imagem Salva com Sucesso!"
         }
 

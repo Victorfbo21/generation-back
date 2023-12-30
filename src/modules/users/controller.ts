@@ -57,7 +57,7 @@ class UsersController {
 
         const result = await this.usersService.updateProfileImage(updateData)
 
-        if (result.error && result.status) {
+        if (result.error) {
             return res.status(result.status).json(result)
         }
 
