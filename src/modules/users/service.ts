@@ -8,6 +8,9 @@ import { generateRandomCode } from "../../infra/utils/generateRandomCode";
 import PasswordRecoveryRepository from "../password-recovery/repository";
 import { IPromiseInterface } from "./Interfaces/promises.interface";
 import GoogleDriveService from '../../infra/providers/uploads/google-drive/service';
+import { IUpdatePasswordInterface } from './Interfaces/update-password.interface';
+import bcrypt from "bcrypt"
+
 
 export default class UserService {
 
@@ -78,6 +81,61 @@ export default class UserService {
 
 
         return users
+    }
+
+    async updatePassword(updatePasswordData: IUpdatePasswordInterface) {
+
+        const recovery = await this.passwordRecoveryRepository.getPasswordRecoveryByCode(updatePasswordData.code)
+
+        if (!recovery)
+            return {
+                data: null,
+                error: true,
+                status: 404,
+                message: "Requisição de Recuperação Não Encontrada"
+            }
+
+        const user = await this.userRepository.getUserById(recovery.user_id)
+
+        const isEqual = await bcrypt.compare(updatePasswordData.password, user?.password ?? "")
+
+        if (isEqual)
+            return {
+                data: null,
+                error: true,
+                status: 400,
+                message: "A nova Senha devera ser diferente da anterior"
+            }
+
+        const updatePassword = await UserSchema.findByIdAndUpdate(user?._id,
+            {
+                passaword: encodePassword(updatePasswordData.password)
+            })
+
+        if (!updatePassword)
+            return {
+                data: null,
+                error: true,
+                status: 500,
+                message: "Erro ao Atualiza Senha"
+            }
+
+        const disabledRecovery = await this.passwordRecoveryRepository.disabledRecovery(user?._id.toHexString() ?? "", recovery._id, updatePasswordData.code)
+
+        if (!disabledRecovery)
+            return {
+                data: null,
+                error: true,
+                status: 500,
+                message: "Erro Ao Desabilitar Recuperação de Senha"
+            }
+
+        return {
+            data: null,
+            error: false,
+            status: 200,
+            message: "Senha Atualziada com Sucesso"
+        }
     }
 
     async passwordRecovery(email: string): Promise<IPromiseInterface> {

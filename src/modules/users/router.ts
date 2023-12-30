@@ -18,6 +18,10 @@ UsersRouter.post('/passsword-recovery', (req, res) => {
     return usersController.recoveryPassword(req, res)
 })
 
+UsersRouter.post('/update-password', (req: Request, res: Response) => {
+    return usersController.updatePassword(req, res)
+})
+
 UsersRouter.put('/profile-image', authMiddleware, (req: Request, res: Response) => {
     return usersController.updateProfileImage(req, res)
 })

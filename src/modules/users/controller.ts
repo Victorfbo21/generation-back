@@ -43,8 +43,21 @@ class UsersController {
         return res.status(200).json(result)
     }
 
-    async updatePassword(req: Request, res: Response) {
+    async updatePassword(req: any, res: Response) {
         const { password, code } = req.body
+
+        const updatePasswordData = {
+            password: password,
+            code: code
+        }
+
+        const result = await this.usersService.updatePassword(updatePasswordData)
+
+        if (result.error)
+            return res.status(result.status).json(result)
+
+        return res.status(result.status).json(result)
+
     }
 
     async updateProfileImage(req: any, res: Response) {

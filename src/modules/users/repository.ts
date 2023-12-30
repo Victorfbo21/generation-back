@@ -39,7 +39,7 @@ export default class UserRepository {
 
     async getUserByEmail(email: string): Promise<any> {
         try {
-            const user = await UserSchema.findOne({ email: email })
+            const user = await UserSchema.findOne({ email: email, isDeleted: false })
 
             return user
         }
