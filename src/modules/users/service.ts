@@ -88,6 +88,7 @@ export default class UserService {
             return {
                 data: null,
                 error: true,
+                status: 401,
                 message: "Usuário não encontrado na base de dados"
             }
 
@@ -105,7 +106,12 @@ export default class UserService {
         const sendRecoveryEmail = await this.resendSenderService.sendRecoverPasswordEmail(sendEmailParams)
 
         if (!sendRecoveryEmail)
-            throw new Error("Erro ao Enviar Email de Recuperação de Senha")
+            return {
+                data: null,
+                error: true,
+                status: 500,
+                message: "Erro ao Enviar Email de Recuperação"
+            }
 
         const recoveryData = {
             user_id: user._id,
@@ -116,12 +122,14 @@ export default class UserService {
 
         const recovery = await this.passwordRecoveryRepository.createPasswordRecovery(recoveryData)
 
+
         if (!recovery)
             throw new Error("Erro ao Criar Recuperação de Senha")
 
         return {
             data: recovery,
             error: false,
+            status: 200,
             message: "Recuperação Criada Com Sucesso!"
         }
     }
