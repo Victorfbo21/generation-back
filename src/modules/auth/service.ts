@@ -1,4 +1,4 @@
-import { ILoginRequestInterface } from './interfaces/login-request.interface';
+import { ILoginRequestDto } from './interfaces/login-request.interface';
 import UserSchema from '../users/schema';
 import TokenService from './tokens.service';
 import bcrypt from "bcrypt"
@@ -11,7 +11,7 @@ export default class AuthService {
         this.tokenService = new TokenService()
     }
 
-    async login(loginData: ILoginRequestInterface) {
+    async login(loginData: ILoginRequestDto) {
 
 
         const user = await UserSchema.findOne({ email: loginData.email })

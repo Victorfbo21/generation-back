@@ -1,4 +1,4 @@
-import { ITokenRequestInterface } from './interfaces/token-request.interface';
+import { ITokenRequestDto } from './interfaces/token-request.interface';
 import jwt, { Secret } from 'jsonwebtoken'
 
 export default class TokenService {
@@ -13,7 +13,7 @@ export default class TokenService {
         this.refreshTokenLife = process.env.TOKEN_EXPIRATION
     }
 
-    async getToken(tokenData: ITokenRequestInterface) {
+    async getToken(tokenData: ITokenRequestDto) {
 
         const accessToken = jwt.sign(tokenData, this.secret, { expiresIn: this.tokenLife })
 
