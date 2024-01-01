@@ -10,8 +10,7 @@ import { IPromiseInterface } from "./Interfaces/promises.interface";
 import GoogleDriveService from '../../infra/providers/uploads/google-drive/service';
 import { IUpdatePasswordInterface } from './Interfaces/update-password.interface';
 import bcrypt from "bcrypt"
-import AppError from '../../infra/http/httpresponse/errors';
-
+import AppResponse from '../../infra/http/httpresponse/appresponse';
 
 export default class UserService {
 
@@ -50,18 +49,38 @@ export default class UserService {
 
             const created = await this.userRepository.createUser(userToCreate)
             if (!created)
-                throw new Error("Error on Create User")
+                return new AppResponse({
+                    data: null,
+                    error: true,
+                    statusCode: 500,
+                    message: "Erro ao Criar Usuário"
+                })
 
-            return created
+            return new AppResponse({
+                data: created,
+                error: false,
+                statusCode: 201,
+                message: "Usuário Criado com Sucesso!"
+            })
         }
         const userId = userExists?._id
         user.password = encodePassword(user.password)
         const updated = await this.userRepository.updateUser(user, userId)
 
         if (!updated)
-            throw new Error("Error on Update User")
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Atualizar Usuário"
+            })
 
-        return updated
+        return new AppResponse({
+            data: updated,
+            error: false,
+            statusCode: 200,
+            message: "Usuário atualizado com Sucesso!"
+        })
     }
 
     async getUserById(id: string) {
