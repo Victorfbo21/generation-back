@@ -16,9 +16,9 @@ export default class AuthController {
         const result = await this.authService.login({ email, password })
 
         if (result.error)
-            return res.status(result.status).json(result)
+            return res.status(result.statusCode).json(result)
 
-        return res.status(200).json(result)
+        return res.status(result.statusCode).json(result)
     }
 
     async refrehToken() {

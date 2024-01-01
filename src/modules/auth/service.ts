@@ -2,6 +2,7 @@ import { ILoginRequestDto } from './interfaces/login-request.interface';
 import UserSchema from '../users/schema';
 import TokenService from './tokens.service';
 import bcrypt from "bcrypt"
+import AppResponse from '../../infra/http/httpresponse/errors';
 
 export default class AuthService {
 
@@ -17,32 +18,33 @@ export default class AuthService {
         const user = await UserSchema.findOne({ email: loginData.email })
 
         if (!user) {
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 401,
+                statusCode: 400,
                 message: "Usuário não Encontrado na Base de Dados"
-            }
+            })
+
         }
 
         if (user.isDeleted) {
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 401,
+                statusCode: 401,
                 message: "Usuário Já Deletado"
-            }
+            })
         }
 
         const verifyPassword = await bcrypt.compare(loginData.password, user.password ?? "")
 
         if (!verifyPassword) {
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 401,
+                statusCode: 401,
                 message: "Senha Inválida"
-            }
+            })
         }
 
         const tokenData = {
@@ -53,12 +55,13 @@ export default class AuthService {
         const tokens = await this.tokenService.getToken(tokenData)
 
         if (!tokens) {
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 500,
+                statusCode: 500,
                 message: "Erro ao Gerar Tokens de Autenticação"
-            }
+            })
+
         }
 
         const today = new Date();
@@ -78,19 +81,16 @@ export default class AuthService {
             profile_image: user.profile_image
         }
 
-        return {
+        return new AppResponse({
             data: {
                 user: userToReturn,
-                status: 'Logged in',
                 accessToken: tokens.accessToken,
                 refreshToken: tokens.refreshToken,
                 valid_at: validDate
             },
             error: false,
-            status: 201,
+            statusCode: 200,
             message: "Usuário Logado com Sucesso!"
-
-        }
-
+        })
     }
 }

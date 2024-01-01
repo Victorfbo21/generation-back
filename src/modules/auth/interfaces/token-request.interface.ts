@@ -1,5 +1,5 @@
 
-export interface ITokenRequestInterface {
+export interface ITokenRequestDto {
     userId: Object,
     type: string
 }

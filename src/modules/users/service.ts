@@ -10,6 +10,7 @@ import { IPromiseInterface } from "./Interfaces/promises.interface";
 import GoogleDriveService from '../../infra/providers/uploads/google-drive/service';
 import { IUpdatePasswordInterface } from './Interfaces/update-password.interface';
 import bcrypt from "bcrypt"
+import AppError from '../../infra/http/httpresponse/errors';
 
 
 export default class UserService {
