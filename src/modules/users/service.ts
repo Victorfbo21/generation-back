@@ -10,8 +10,7 @@ import { IPromiseInterface } from "./Interfaces/promises.interface";
 import GoogleDriveService from '../../infra/providers/uploads/google-drive/service';
 import { IUpdatePasswordInterface } from './Interfaces/update-password.interface';
 import bcrypt from "bcrypt"
-import AppError from '../../infra/http/httpresponse/errors';
-
+import AppResponse from '../../infra/http/httpresponse/errors';
 
 export default class UserService {
 
@@ -144,12 +143,12 @@ export default class UserService {
         const user = await this.userRepository.getUserByEmail(email)
 
         if (!user)
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 401,
+                statusCode: 400,
                 message: "Usuário não encontrado na base de dados"
-            }
+            })
 
         const today = new Date();
         today.setMinutes(today.getMinutes() + 40);
@@ -165,13 +164,12 @@ export default class UserService {
         const sendRecoveryEmail = await this.resendSenderService.sendRecoverPasswordEmail(sendEmailParams)
 
         if (!sendRecoveryEmail)
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 500,
+                statusCode: 500,
                 message: "Erro ao Enviar Email de Recuperação"
-            }
-
+            }) 
         const recoveryData = {
             user_id: user._id,
             recovery_code: randomCode,
@@ -183,14 +181,19 @@ export default class UserService {
 
 
         if (!recovery)
-            throw new Error("Erro ao Criar Recuperação de Senha")
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Gerar Recuperação de Senha"
+            })
 
-        return {
+        return new AppResponse({
             data: recovery,
             error: false,
-            status: 200,
+            statusCode: 200,
             message: "Recuperação Criada Com Sucesso!"
-        }
+        })
     }
 
     async updateProfileImage(updateData: IUpdateImageInterface) {
