@@ -1,8 +1,8 @@
 
 
-export interface ISenderEmailService {
-    sendEMail(mailData: any): Promise<any>
+export interface ISenderEmailServiceInterface {
+    sendEMail(mailData: any): Promise<boolean>
     sendRecoverPasswordEmail(params: any): Promise<any>
-    sendUpdatePassword(params: any): Promise<any>
+    sendUpdatePasswordConfirmation(to: string): Promise<boolean>
     sendUpdateEmail(params: any): Promise<any>
 }
