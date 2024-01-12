@@ -1,6 +1,6 @@
 export interface IPromiseInterface {
     data: any,
     error: boolean,
-    status: number,
+    statusCode: number,
     message: string
 }

@@ -11,11 +11,12 @@ import GoogleDriveService from '../../infra/providers/uploads/google-drive/servi
 import { IUpdatePasswordInterface } from './Interfaces/update-password.interface';
 import bcrypt from "bcrypt"
 import AppResponse from '../../infra/http/httpresponse/appresponse';
-
+import NodeMailerSenderService from '../../infra/providers/emails/nodemailer/service';
 export default class UserService {
 
     private userRepository: UserRepository
     private resendSenderService: ResendSenderService
+    private nodemailerSenderService: NodeMailerSenderService
     private passwordRecoveryRepository: PasswordRecoveryRepository
     private googleDriveService: GoogleDriveService
     private allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
@@ -25,6 +26,7 @@ export default class UserService {
         this.resendSenderService = new ResendSenderService()
         this.passwordRecoveryRepository = new PasswordRecoveryRepository()
         this.googleDriveService = new GoogleDriveService()
+        this.nodemailerSenderService = new NodeMailerSenderService()
     }
 
     async upSert(user: CreateUserInterface) {
@@ -108,54 +110,75 @@ export default class UserService {
         const recovery = await this.passwordRecoveryRepository.getPasswordRecoveryByCode(updatePasswordData.code)
 
         if (!recovery)
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 404,
+                statusCode: 404,
                 message: "Requisição de Recuperação Não Encontrada"
-            }
+            })
+
+        if (updatePasswordData.password != updatePasswordData.confirmPassword) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 404,
+                message: "Senha e Confirmação de Senha devem ser Iguais"
+            })
+        }
 
         const user = await this.userRepository.getUserById(recovery.user_id)
 
         const isEqual = await bcrypt.compare(updatePasswordData.password, user?.password ?? "")
 
         if (isEqual)
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 400,
+                statusCode: 400,
                 message: "A nova Senha devera ser diferente da anterior"
-            }
-
-        const updatePassword = await UserSchema.findByIdAndUpdate(user?._id,
-            {
-                passaword: encodePassword(updatePasswordData.password)
             })
 
+        const updatePassword = await UserSchema.findOneAndUpdate({ email: user?.email }, { password: encodePassword(updatePasswordData?.password) })
+
         if (!updatePassword)
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 500,
+                statusCode: 500,
                 message: "Erro ao Atualiza Senha"
-            }
+            })
 
         const disabledRecovery = await this.passwordRecoveryRepository.disabledRecovery(user?._id.toHexString() ?? "", recovery._id, updatePasswordData.code)
 
         if (!disabledRecovery)
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 500,
+                statusCode: 500,
                 message: "Erro Ao Desabilitar Recuperação de Senha"
-            }
+            })
 
-        return {
+        const sendUpdatedEmailConfirmationResend = await this.resendSenderService.sendUpdatePasswordConfirmation(updatePasswordData.email)
+
+        if (!sendUpdatedEmailConfirmationResend) {
+
+            const sendUpdatedEmailConfirmationNodeMailer = await this.nodemailerSenderService.sendUpdatePasswordConfirmation(updatePasswordData.email)
+
+            if (!sendUpdatedEmailConfirmationNodeMailer)
+                return new AppResponse({
+                    data: null,
+                    error: true,
+                    statusCode: 500,
+                    message: "Erro ao Enviar Email de Confirmação"
+                })
+        }
+
+        return new AppResponse({
             data: null,
             error: false,
-            status: 200,
-            message: "Senha Atualziada com Sucesso"
-        }
+            statusCode: 200,
+            message: "Senha Atualizada com Sucesso"
+        })
     }
 
     async passwordRecovery(email: string): Promise<IPromiseInterface> {
@@ -163,12 +186,12 @@ export default class UserService {
         const user = await this.userRepository.getUserByEmail(email)
 
         if (!user)
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 401,
+                statusCode: 400,
                 message: "Usuário não encontrado na base de dados"
-            }
+            })
 
         const today = new Date();
         today.setMinutes(today.getMinutes() + 40);
@@ -181,15 +204,19 @@ export default class UserService {
             code: randomCode
         }
 
-        const sendRecoveryEmail = await this.resendSenderService.sendRecoverPasswordEmail(sendEmailParams)
+        const sendRecoveryEmailResend = await this.resendSenderService.sendRecoverPasswordEmail(sendEmailParams)
 
-        if (!sendRecoveryEmail)
-            return {
-                data: null,
-                error: true,
-                status: 500,
-                message: "Erro ao Enviar Email de Recuperação"
-            }
+        if (!sendRecoveryEmailResend) {
+            const sendRecoveryEmailNodemailer = await this.nodemailerSenderService.sendRecoverPasswordEmail(sendEmailParams)
+
+            if (!sendRecoveryEmailNodemailer)
+                return new AppResponse({
+                    data: null,
+                    error: true,
+                    statusCode: 500,
+                    message: "Erro ao Enviar Email de Recuperação"
+                })
+        }
 
         const recoveryData = {
             user_id: user._id,
@@ -202,14 +229,19 @@ export default class UserService {
 
 
         if (!recovery)
-            throw new Error("Erro ao Criar Recuperação de Senha")
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Gerar Recuperação de Senha"
+            })
 
-        return {
+        return new AppResponse({
             data: recovery,
             error: false,
-            status: 200,
+            statusCode: 200,
             message: "Recuperação Criada Com Sucesso!"
-        }
+        })
     }
 
     async updateProfileImage(updateData: IUpdateImageInterface) {

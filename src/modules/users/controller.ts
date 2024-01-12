@@ -37,26 +37,25 @@ class UsersController {
 
         const result = await this.usersService.passwordRecovery(email)
 
-        if (result.error)
-            return res.status(404).json(result)
-
-        return res.status(200).json(result)
+        return res.status(result.statusCode).json(result)
     }
 
     async updatePassword(req: any, res: Response) {
-        const { password, code } = req.body
+        const { password, code, confirmPassword, email } = req.body
 
         const updatePasswordData = {
             password: password,
+            confirmPassword: confirmPassword,
+            email: email,
             code: code
         }
 
         const result = await this.usersService.updatePassword(updatePasswordData)
 
         if (result.error)
-            return res.status(result.status).json(result)
+            return res.status(result.statusCode).json(result)
 
-        return res.status(result.status).json(result)
+        return res.status(result.statusCode).json(result)
 
     }
 
