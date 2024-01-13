@@ -74,7 +74,7 @@ export default class AuthService {
             email: user.email,
             whatsapp: user.whatsapp,
             type: user.type,
-            isDeleted: user.type,
+            isDeleted: user.isDeleted,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
             function: user.function,

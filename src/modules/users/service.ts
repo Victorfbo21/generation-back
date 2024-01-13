@@ -138,7 +138,11 @@ export default class UserService {
                 message: "A nova Senha devera ser diferente da anterior"
             })
 
-        const updatePassword = await UserSchema.findOneAndUpdate({ email: user?.email }, { password: encodePassword(updatePasswordData?.password) })
+        const updatePassword = await UserSchema.findOneAndUpdate(
+            { email: user?.email },
+            {
+                password: encodePassword(updatePasswordData?.password)
+            })
 
         if (!updatePassword)
             return new AppResponse({
@@ -148,7 +152,9 @@ export default class UserService {
                 message: "Erro ao Atualiza Senha"
             })
 
-        const disabledRecovery = await this.passwordRecoveryRepository.disabledRecovery(user?._id.toHexString() ?? "", recovery._id, updatePasswordData.code)
+        const disabledRecovery = await this.passwordRecoveryRepository.disabledRecovery(user?._id.toHexString() ?? "",
+            recovery._id,
+            updatePasswordData.code)
 
         if (!disabledRecovery)
             return new AppResponse({
@@ -247,21 +253,21 @@ export default class UserService {
     async updateProfileImage(updateData: IUpdateImageInterface) {
 
         if (!updateData.file) {
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 400,
+                statusCode: 400,
                 message: "Imagem não enviada"
-            }
+            })
         }
 
         if (!this.allowedTypes.includes(updateData.file.mimetype))
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 400,
+                statusCode: 400,
                 message: "Tipo de Imagem não Suportado"
-            }
+            })
 
         const uploadImageData = {
             filename: updateData.file.name,
@@ -271,30 +277,30 @@ export default class UserService {
         const uploadImageResponse = await this.googleDriveService.uploadFile(uploadImageData)
 
         if (uploadImageResponse.error) {
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 500,
+                statusCode: 500,
                 message: "Erro ao Fazer Upload Da Imagem"
-            }
+            })
         }
 
         const saveProfileImage = await UserSchema.findByIdAndUpdate(updateData.userId, { profile_image: uploadImageResponse.fileURL })
 
         if (!saveProfileImage)
-            return {
+            return new AppResponse({
                 data: null,
                 error: true,
-                status: 500,
+                statusCode: 500,
                 message: "Problemas Ao Salvar Imagem de Perfil"
-            }
+            })
 
-        return {
+        return new AppResponse({
             data: null,
             error: false,
-            status: 200,
+            statusCode: 200,
             message: "Imagem Salva com Sucesso!"
-        }
+        })
 
     }
 
