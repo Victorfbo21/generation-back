@@ -1,9 +1,14 @@
 import mongoose from "mongoose";
 
 const WorksSchema = new mongoose.Schema({
-    name: { type: String },
-    code: { type: String },
-    price: { type: String, require: true },
+    workName: { type: String },
+    workCode: { type: String },
+    workPrice: { type: String, require: true },
+    category: { type: String, require: false },
+    isActive: { type: Boolean, require: true },
+    isSale: { type: Boolean, require: false },
+    salePrice: { type: String, require: false },
+    disableBy: { type: String, require: false },
     isDeleted: { type: Boolean, default: false }
 }, {
     timestamps: true
