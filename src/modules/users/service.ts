@@ -164,20 +164,15 @@ export default class UserService {
                 message: "Erro Ao Desabilitar Recuperação de Senha"
             })
 
-        const sendUpdatedEmailConfirmationResend = await this.resendSenderService.sendUpdatePasswordConfirmation(updatePasswordData.email)
+        const sendedEmailConfirmation = await this.sendEmailProviders(user?.email ?? "")
 
-        if (!sendUpdatedEmailConfirmationResend) {
-
-            const sendUpdatedEmailConfirmationNodeMailer = await this.nodemailerSenderService.sendUpdatePasswordConfirmation(updatePasswordData.email)
-
-            if (!sendUpdatedEmailConfirmationNodeMailer)
-                return new AppResponse({
-                    data: null,
-                    error: true,
-                    statusCode: 500,
-                    message: "Erro ao Enviar Email de Confirmação"
-                })
-        }
+        if (!sendedEmailConfirmation)
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Enviar Email de Confirmação"
+            })
 
         return new AppResponse({
             data: null,
@@ -185,6 +180,24 @@ export default class UserService {
             statusCode: 200,
             message: "Senha Atualizada com Sucesso"
         })
+    }
+
+    async sendEmailProviders(email: string) {
+
+        const sendUpdatedEmailConfirmationResend = await this.resendSenderService.sendUpdatePasswordConfirmation(email)
+
+        if (!sendUpdatedEmailConfirmationResend) {
+
+            const sendUpdatedEmailConfirmationNodeMailer = await this.nodemailerSenderService.sendUpdatePasswordConfirmation(email)
+
+            if (!sendUpdatedEmailConfirmationNodeMailer) {
+
+                return false
+            }
+            return true
+        }
+
+        return true
     }
 
     async passwordRecovery(email: string): Promise<IPromiseInterface> {
