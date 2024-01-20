@@ -30,59 +30,50 @@ export default class UserService {
         this.nodemailerSenderService = new NodeMailerSenderService()
     }
 
-    async upSert(user: CreateUserInterface) {
+    async createUser(user: CreateUserInterface) {
 
-        const userExists = await UserSchema.findOne({ email: user.email })
+        const userExists = await UserSchema.findOne({ email: user.email, isDeleted: false })
 
-        if (!userExists) {
+        if (userExists) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 400,
+                message: "Usuário Já Cadastrado"
+            })
+        }
 
-            const isWorker = user.type === 'worker'
+        const isWorker = user.type === 'worker'
 
-            const commonData = {
+        const commonData = {
                 name: user.name,
                 email: user.email,
                 whatsapp: user.whatsapp,
                 type: user.type
-            }
+        }
 
-            let userToCreate
+        let userToCreate
 
-            isWorker ? userToCreate = { ...commonData, owner: user.owner } : userToCreate = { ...commonData, function: user.function, password: user.password }
+        isWorker ? userToCreate = { ...commonData, owner: user.owner } : userToCreate = { ...commonData, function: user.function, password: user.password }
 
-            const created = await this.userRepository.createUser(userToCreate)
-            if (!created)
-                return new AppResponse({
+        const created = await this.userRepository.createUser(userToCreate)
+
+
+        if (!created)
+            return new AppResponse({
                     data: null,
                     error: true,
                     statusCode: 500,
                     message: "Erro ao Criar Usuário"
-                })
+            })
 
-            return new AppResponse({
+        return new AppResponse({
                 data: created,
                 error: false,
                 statusCode: 201,
                 message: "Usuário Criado com Sucesso!"
-            })
-        }
-        const userId = userExists?._id
-        user.password = encodePassword(user.password ?? "")
-        const updated = await this.userRepository.updateUser(user, userId)
-
-        if (!updated)
-            return new AppResponse({
-                data: null,
-                error: true,
-                statusCode: 500,
-                message: "Erro ao Atualizar Usuário"
-            })
-
-        return new AppResponse({
-            data: updated,
-            error: false,
-            statusCode: 200,
-            message: "Usuário atualizado com Sucesso!"
         })
+
     }
 
     async updateUser(userId: string, payload: Partial<IUser>) {

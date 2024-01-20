@@ -8,11 +8,11 @@ class UsersController {
         this.usersService = new UsersService()
     }
 
-    async upSert(req: any, res: Response) {
+    async createUser(req: any, res: Response) {
 
         const { body } = req
 
-        const result = await this.usersService.upSert(body)
+        const result = await this.usersService.createUser(body)
 
         return res.status(result.statusCode).json(result)
     }

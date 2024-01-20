@@ -8,7 +8,7 @@ const UsersRouter = Router();
 const usersController = new UsersController();
 
 UsersRouter.post('/create', (req, res) => {
-    return usersController.upSert(req, res)
+    return usersController.createUser(req, res)
 })
 UsersRouter.put('/update', authMiddleware, (req, res) => {
     return usersController.updateUser(req, res)
