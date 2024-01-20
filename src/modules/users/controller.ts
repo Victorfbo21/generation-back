@@ -17,6 +17,15 @@ class UsersController {
         return res.status(result.statusCode).json(result)
     }
 
+    async updateUser(req: any, res: Response) {
+        const { user } = req
+        const { payload } = req.body
+
+        const result = await this.usersService.updateUser(user.id, payload)
+
+        return res.status(result.statusCode).json(result)
+    }
+
     async getUserById(req: Request, res: Response) {
 
         const { id } = req.params

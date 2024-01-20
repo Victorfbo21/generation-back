@@ -12,6 +12,7 @@ import { IUpdatePasswordInterface } from './Interfaces/update-password.interface
 import bcrypt from "bcrypt"
 import AppResponse from '../../infra/http/httpresponse/AppResponse';
 import NodeMailerSenderService from '../../infra/providers/emails/nodemailer/service';
+import { IUser } from './Interfaces/user.interface';
 export default class UserService {
 
     private userRepository: UserRepository
@@ -40,14 +41,13 @@ export default class UserService {
             const commonData = {
                 name: user.name,
                 email: user.email,
-                password: encodePassword(user.password),
                 whatsapp: user.whatsapp,
                 type: user.type
             }
 
             let userToCreate
 
-            isWorker ? userToCreate = { ...commonData, function: user.function } : userToCreate = { ...commonData }
+            isWorker ? userToCreate = { ...commonData, owner: user.owner } : userToCreate = { ...commonData, function: user.function, password: user.password }
 
             const created = await this.userRepository.createUser(userToCreate)
             if (!created)
@@ -66,7 +66,7 @@ export default class UserService {
             })
         }
         const userId = userExists?._id
-        user.password = encodePassword(user.password)
+        user.password = encodePassword(user.password ?? "")
         const updated = await this.userRepository.updateUser(user, userId)
 
         if (!updated)
@@ -75,6 +75,27 @@ export default class UserService {
                 error: true,
                 statusCode: 500,
                 message: "Erro ao Atualizar Usuário"
+            })
+
+        return new AppResponse({
+            data: updated,
+            error: false,
+            statusCode: 200,
+            message: "Usuário atualizado com Sucesso!"
+        })
+    }
+
+    async updateUser(userId: string, payload: Partial<IUser>) {
+
+
+        const updated = await this.userRepository.updateUser(payload, userId)
+
+        if (!updated)
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Falha ao Atualizar Usuário!"
             })
 
         return new AppResponse({

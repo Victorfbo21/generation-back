@@ -10,8 +10,8 @@ const usersController = new UsersController();
 UsersRouter.post('/create', (req, res) => {
     return usersController.upSert(req, res)
 })
-UsersRouter.put('/update', (req, res) => {
-    return usersController.upSert(req, res)
+UsersRouter.put('/update', authMiddleware, (req, res) => {
+    return usersController.updateUser(req, res)
 })
 
 UsersRouter.post('/passsword-recovery', (req, res) => {
