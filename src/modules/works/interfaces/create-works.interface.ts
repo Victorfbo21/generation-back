@@ -1,5 +1,5 @@
 export interface ICreateWorkInterface {
-    user: string,
+    category: string,
     workName: string,
     workPrice: string
 }

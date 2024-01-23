@@ -3,12 +3,20 @@ import { authMiddleware } from "../../infra/http/middlewares/auth.middleware";
 import { Request, Response } from "express";
 import WorksController from "./controller";
 
-const UsersRouter = Router();
+const WorkRouter = Router();
 
 const worksController = new WorksController();
 
-UsersRouter.post('/create', (req: Request, res: Response) => {
+WorkRouter.post('/create', authMiddleware, (req: Request, res: Response) => {
     return worksController.createWork(req, res)
 })
 
-export default UsersRouter;
+WorkRouter.patch('/update', authMiddleware, (req: Request, res: Response) => {
+    return worksController.updateWork(req, res)
+})
+
+WorkRouter.patch('/disable', authMiddleware, (req: Request, res: Response) => {
+    return worksController.disableWork(req, res)
+})
+
+export default WorkRouter;

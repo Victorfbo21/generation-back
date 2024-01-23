@@ -5,8 +5,8 @@ const WorksSchema = new mongoose.Schema({
     workCode: { type: String },
     workPrice: { type: String, require: true },
     category: { type: String, require: false },
-    isActive: { type: Boolean, require: true },
-    isSale: { type: Boolean, require: false },
+    isActive: { type: Boolean, require: true, default: true },
+    isSale: { type: Boolean, require: false, default: false },
     salePrice: { type: String, require: false },
     disableBy: { type: String, require: false },
     isDeleted: { type: Boolean, default: false }

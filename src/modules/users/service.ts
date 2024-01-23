@@ -10,7 +10,7 @@ import { IPromiseInterface } from "./Interfaces/promises.interface";
 import GoogleDriveService from '../../infra/providers/uploads/google-drive/service';
 import { IUpdatePasswordInterface } from './Interfaces/update-password.interface';
 import bcrypt from "bcrypt"
-import AppResponse from '../../infra/http/httpresponse/AppResponse';
+import AppResponse from '../../infra/http/httpresponse/appresponse';
 import NodeMailerSenderService from '../../infra/providers/emails/nodemailer/service';
 export default class UserService {
 

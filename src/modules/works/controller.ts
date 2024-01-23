@@ -10,17 +10,37 @@ export default class WorksController {
     }
 
     async createWork(req: any, res: Response) {
-        const { user } = req
-        const { workName, workPrice } = req.body
+        const { workName, workPrice, category } = req.body
 
         const data = {
-            user: user,
             workName: workName,
-            workPrice: workPrice
+            workPrice: workPrice,
+            category: category
         }
 
         const result = await this.worksService.createWork(data)
 
+        return res.status(result.statusCode).json(result)
+    }
 
+    async updateWork(req: any, res: Response) {
+        const { payload, workId } = req.body
+
+        const data = {
+            payload,
+            workId
+        }
+
+        const result = await this.worksService.updateWork(data)
+
+        return res.status(result.statusCode).json(result)
+    }
+
+    async disableWork(req: Request, res: Response) {
+        const { workId } = req.body
+
+        const result = await this.worksService.disabledWork(workId)
+
+        return res.status(result.statusCode).json(result)
     }
 }

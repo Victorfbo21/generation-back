@@ -32,21 +32,16 @@ async function authMiddleware(
         }
 
         const userId = decoded.userId
+        const userType = decoded.type
 
-        const user = await userService.getUserById(userId);
-
-        if (user.type === UserTypeEnum.owner) {
-            return {
-                message: "Forbidden",
-                status: 403
-            }
+        if (userType === UserTypeEnum.worker) {
+            return response.status(403).json({ message: "Forbidden" })
         }
 
         request.user = {
-            id: user.id,
-            type: user.type
+            id: userId,
+            type: userType
         };
-
         return next();
     } catch (err) {
         return response
