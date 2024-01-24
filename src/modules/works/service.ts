@@ -9,6 +9,18 @@ export default class WorksService {
 
     }
 
+    async getActiveWorks() {
+        // TODO
+    }
+
+    async getDisabledsWorks() {
+        // TODO
+    }
+
+    async getIsSaleWorks() {
+        // TODO
+    }
+
     async createWork(createWorkData: ICreateWorkInterface) {
         const work = await WorksSchema.findOne({ workName: createWorkData.workName, category: createWorkData.category })
         if (work) {
@@ -81,7 +93,6 @@ export default class WorksService {
 
     async disabledWork(workId: string) {
 
-
         const workToDisable = await WorksSchema.findOne({ _id: Object(workId) })
 
         if (!workToDisable) {
@@ -115,5 +126,10 @@ export default class WorksService {
         })
 
     }
+
+    async turnIsSaleWork() {
+        // TODO
+    }
+
 
 }
