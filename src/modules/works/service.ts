@@ -3,10 +3,13 @@ import WorksSchema from "./schema";
 import AppResponse from "../../infra/http/httpresponse/appresponse";
 import { IUpdateWorkInterface } from "./interfaces/update-work.interface";
 import { generateRandomCode } from "../../infra/utils/generateRandomCode";
+import WorkRepository from "./repository";
 export default class WorksService {
 
-    constructor() {
+    private workRepository: WorkRepository
 
+    constructor() {
+        this.workRepository = new WorkRepository();
     }
 
     async getActiveWorks() {
@@ -66,12 +69,7 @@ export default class WorksService {
             })
         }
 
-        const workUpdated = await WorksSchema.findByIdAndUpdate(workToUpdate._id,
-            {
-                $set: updateData.payload
-            },
-            { new: true }
-        )
+        const workUpdated = await this.workRepository.updateWork(updateData.workId, updateData.payload)
 
         if (!workUpdated) {
             return new AppResponse({
@@ -104,10 +102,7 @@ export default class WorksService {
             })
         }
 
-        const disabledWork = await WorksSchema.findByIdAndUpdate(workToDisable._id, {
-            $set: { isActive: false }
-        }, { new: true })
-
+        const disabledWork = this.workRepository.disableWork(workId)
 
         if (!disabledWork) {
             return new AppResponse({
@@ -119,11 +114,86 @@ export default class WorksService {
         }
 
         return new AppResponse({
-            data: disabledWork.workCode,
+            data: true,
             error: false,
             statusCode: 200,
             message: "Serviço Desabilitado com Sucesso!"
         })
+
+    }
+
+    async activeWork(workId: string) {
+        const workToActive = await WorksSchema.findOne({ _id: Object(workId) })
+
+        if (!workToActive) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 400,
+                message: "Serviço a ser Ativado não encontrado"
+            })
+        }
+
+        const workActived = await WorksSchema.findByIdAndUpdate(workToActive._id, {
+            $set: {
+                isActive: true
+            }
+        }, { new: true })
+
+        if (!workActived) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Ativar Serviço"
+            })
+        }
+
+        return new AppResponse({
+            data: workActived,
+            error: false,
+            statusCode: 200,
+            message: "Serviço Ativado com Sucesso!"
+        })
+    }
+
+    async deleteWork(workId: string) {
+        const workToDelete = await WorksSchema.findOne({ _id: Object(workId) })
+
+        if (!workToDelete) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 400,
+                message: "Serviço a ser deletado não encontrado"
+            })
+        }
+
+        const workDeleted = await WorksSchema.findByIdAndUpdate(workToDelete._id,
+            {
+                $set: {
+                    isDeleted: true,
+                    isActive: false
+                }
+            }, { new: true })
+
+
+        if (!workDeleted) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Deletar Serviço"
+            })
+        }
+
+        return new AppResponse({
+            data: null,
+            error: false,
+            statusCode: 200,
+            message: "Serviço Deletado com Sucesso!"
+        })
+
 
     }
 

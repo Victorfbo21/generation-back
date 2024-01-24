@@ -19,4 +19,8 @@ WorkRouter.patch('/disable', authMiddleware, (req: Request, res: Response) => {
     return worksController.disableWork(req, res)
 })
 
+WorkRouter.post('/delete', authMiddleware, (req: Request, res: Response) => {
+    return worksController.deleteWork(req, res)
+})
+
 export default WorkRouter;

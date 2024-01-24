@@ -43,4 +43,16 @@ export default class WorksController {
 
         return res.status(result.statusCode).json(result)
     }
+
+    async activeWork(req: Request, res: Response) {
+
+    }
+
+    async deleteWork(req: Request, res: Response) {
+        const { workId } = req.body
+
+        const result = await this.worksService.deleteWork(workId)
+
+        return res.status(result.statusCode).json(result)
+    }
 }
