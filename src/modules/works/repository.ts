@@ -1,6 +1,25 @@
 import WorksSchema from "./schema";
 import { IWorkInterface } from "./interfaces/work.interface";
+import { IDisableWorkInterface } from "./interfaces/disable-work.interface";
 export default class WorkRepository {
+
+
+    async getActiveWorks(owner: string) {
+        try {
+            const activedWors = await WorksSchema.find({
+                $and: [{
+                    isActive: true,
+                    isDeleted: false,
+                    owner: owner
+                }]
+            })
+
+            return activedWors
+        }
+        catch (err) {
+            return null
+        }
+    }
 
 
     async updateWork(workId: string, payload: Partial<IWorkInterface>) {
@@ -17,12 +36,13 @@ export default class WorkRepository {
         }
     }
 
-    async disableWork(workId: string): Promise<boolean> {
+    async disableWork(disableData: IDisableWorkInterface): Promise<boolean> {
         try {
-            const disabledWork = await WorksSchema.findByIdAndUpdate(workId,
+            const disabledWork = await WorksSchema.findByIdAndUpdate(disableData.workId,
                 {
                     $set: {
-                        isActive: false
+                        isActive: false,
+                        disableBy: disableData.owner
                     }
                 }, { new: true })
 

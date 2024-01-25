@@ -9,13 +9,23 @@ export default class WorksController {
         this.worksService = new WorksService()
     }
 
+    async getActiveWork(req: any, res: Response) {
+
+        const { user } = req
+        const result = await this.worksService.getActiveWorks(user.id)
+
+        return res.status(result.statusCode).json(result)
+    }
+
     async createWork(req: any, res: Response) {
         const { workName, workPrice, category } = req.body
+        const { user } = req
 
         const data = {
             workName: workName,
             workPrice: workPrice,
-            category: category
+            category: category,
+            owner: user.id
         }
 
         const result = await this.worksService.createWork(data)
@@ -36,16 +46,16 @@ export default class WorksController {
         return res.status(result.statusCode).json(result)
     }
 
-    async disableWork(req: Request, res: Response) {
+    async disableWork(req: any, res: Response) {
         const { workId } = req.body
-
-        const result = await this.worksService.disabledWork(workId)
+        const { user } = req
+        const data = {
+            workId,
+            owner: user.id
+        }
+        const result = await this.worksService.disabledWork(data)
 
         return res.status(result.statusCode).json(result)
-    }
-
-    async activeWork(req: Request, res: Response) {
-
     }
 
     async deleteWork(req: Request, res: Response) {

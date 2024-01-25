@@ -7,6 +7,12 @@ const WorkRouter = Router();
 
 const worksController = new WorksController();
 
+
+
+WorkRouter.get('/active', authMiddleware, (req: Request, res: Response) => {
+    return worksController.getActiveWork(req, res)
+})
+
 WorkRouter.post('/create', authMiddleware, (req: Request, res: Response) => {
     return worksController.createWork(req, res)
 })

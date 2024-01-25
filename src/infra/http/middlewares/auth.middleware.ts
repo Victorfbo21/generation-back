@@ -15,10 +15,16 @@ async function authMiddleware(
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-        response.status(401).json({ message: "Token missing" })
+        return response.status(401).json({ message: "Token missing" });
     }
 
-    const [, token] = authHeader?.split(" ");
+    const tokenArray = authHeader.split(" ");
+
+    if (tokenArray.length !== 2) {
+        return response.status(401).json({ message: "Invalid token format" });
+    }
+
+    const [, token] = tokenArray;
 
     try {
         const decoded = jwt.verify(token as string, process.env.TOKEN_APP_SECRET ?? "")

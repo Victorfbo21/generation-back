@@ -4,6 +4,7 @@ import AppResponse from "../../infra/http/httpresponse/appresponse";
 import { IUpdateWorkInterface } from "./interfaces/update-work.interface";
 import { generateRandomCode } from "../../infra/utils/generateRandomCode";
 import WorkRepository from "./repository";
+import { IDisableWorkInterface } from "./interfaces/disable-work.interface";
 export default class WorksService {
 
     private workRepository: WorkRepository
@@ -12,8 +13,24 @@ export default class WorksService {
         this.workRepository = new WorkRepository();
     }
 
-    async getActiveWorks() {
-        // TODO
+    async getActiveWorks(owner: string) {
+
+        const activedWorks = await this.workRepository.getActiveWorks(owner)
+
+        if (!activedWorks)
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Encontrar Serviços Ativos"
+            })
+
+        return new AppResponse({
+            data: activedWorks,
+            error: false,
+            statusCode: 200,
+            message: "Serviços Encontrados com Sucesso!"
+        })
     }
 
     async getDisabledsWorks() {
@@ -25,7 +42,13 @@ export default class WorksService {
     }
 
     async createWork(createWorkData: ICreateWorkInterface) {
-        const work = await WorksSchema.findOne({ workName: createWorkData.workName, category: createWorkData.category })
+        const work = await WorksSchema.findOne(
+            {
+                workName: createWorkData.workName,
+                category: createWorkData.category,
+                owner: createWorkData.owner
+            })
+
         if (work) {
             return new AppResponse({
                 data: null,
@@ -89,9 +112,9 @@ export default class WorksService {
 
     }
 
-    async disabledWork(workId: string) {
+    async disabledWork(data: IDisableWorkInterface) {
 
-        const workToDisable = await WorksSchema.findOne({ _id: Object(workId) })
+        const workToDisable = await WorksSchema.findOne({ _id: Object(data.workId) })
 
         if (!workToDisable) {
             return new AppResponse({
@@ -102,7 +125,7 @@ export default class WorksService {
             })
         }
 
-        const disabledWork = this.workRepository.disableWork(workId)
+        const disabledWork = this.workRepository.disableWork(data)
 
         if (!disabledWork) {
             return new AppResponse({
