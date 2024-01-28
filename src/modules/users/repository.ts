@@ -91,4 +91,22 @@ export default class UserRepository {
             throw new Error("Error Finding Users")
         }
     }
+
+    async getWorkersByOwner(ownerId: string) {
+        try {
+            const workers = await UserSchema.find(
+                {
+                    $and: [
+                        { owner: ownerId },
+                        { isDeleted: false }
+                    ]
+                }
+            )
+
+            return workers
+        }
+        catch (err) {
+            throw new Error("Error Finding Users")
+        }
+    }
 }

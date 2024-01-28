@@ -117,6 +117,27 @@ export default class UserService {
         return users
     }
 
+    async getWorkersByOwner(ownerId: string) {
+
+        const workers = await this.userRepository.getWorkersByOwner(ownerId)
+
+        if (!workers) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Recuperar Funcionários"
+            })
+        }
+
+        return new AppResponse({
+            data: workers,
+            error: false,
+            statusCode: 200,
+            message: "Funcionários Recuperados com Sucesso!"
+        })
+    }
+
     async updatePassword(updatePasswordData: IUpdatePasswordInterface) {
 
         const recovery = await this.passwordRecoveryRepository.getPasswordRecoveryByCode(updatePasswordData.code)

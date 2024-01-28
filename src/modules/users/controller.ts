@@ -8,6 +8,14 @@ class UsersController {
         this.usersService = new UsersService()
     }
 
+    async workersByowner(req: any, res: Response) {
+        const { userId } = req
+
+        const result = await this.usersService.getWorkersByOwner(userId)
+
+        return res.status(result.statusCode).json(result)
+    }
+
     async createUser(req: any, res: Response) {
 
         const { body } = req
