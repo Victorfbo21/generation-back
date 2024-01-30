@@ -13,12 +13,14 @@ import bcrypt from "bcrypt"
 import AppResponse from '../../infra/http/httpresponse/appresponse';
 import NodeMailerSenderService from '../../infra/providers/emails/nodemailer/service';
 import { IUser } from './Interfaces/user.interface';
+import PasswordRecoveryService from '../password-recovery/service';
 export default class UserService {
 
     private userRepository: UserRepository
     private resendSenderService: ResendSenderService
     private nodemailerSenderService: NodeMailerSenderService
     private passwordRecoveryRepository: PasswordRecoveryRepository
+    private passwordRecoveryService: PasswordRecoveryService
     private googleDriveService: GoogleDriveService
     private allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
 
@@ -28,6 +30,7 @@ export default class UserService {
         this.passwordRecoveryRepository = new PasswordRecoveryRepository()
         this.googleDriveService = new GoogleDriveService()
         this.nodemailerSenderService = new NodeMailerSenderService()
+        this.passwordRecoveryService = new PasswordRecoveryService()
     }
 
     async createUser(user: CreateUserInterface) {
@@ -197,7 +200,7 @@ export default class UserService {
                 message: "Erro Ao Desabilitar Recuperação de Senha"
             })
 
-        const sendedEmailConfirmation = await this.sendEmailProviders(user?.email ?? "")
+        const sendedEmailConfirmation = await this.passwordRecoveryService.sendUpdatedConfirmation(user?.email ?? "")
 
         if (!sendedEmailConfirmation)
             return new AppResponse({
@@ -215,24 +218,6 @@ export default class UserService {
         })
     }
 
-    async sendEmailProviders(email: string) {
-
-        const sendUpdatedEmailConfirmationResend = await this.resendSenderService.sendUpdatePasswordConfirmation(email)
-
-        if (!sendUpdatedEmailConfirmationResend) {
-
-            const sendUpdatedEmailConfirmationNodeMailer = await this.nodemailerSenderService.sendUpdatePasswordConfirmation(email)
-
-            if (!sendUpdatedEmailConfirmationNodeMailer) {
-
-                return false
-            }
-            return true
-        }
-
-        return true
-    }
-
     async passwordRecovery(email: string): Promise<IPromiseInterface> {
 
         const user = await this.userRepository.getUserByEmail(email)
@@ -243,6 +228,16 @@ export default class UserService {
                 error: true,
                 statusCode: 400,
                 message: "Usuário não encontrado na base de dados"
+            })
+
+        const verifIsActiveRecovery = await this.passwordRecoveryRepository.getLastRecoveryByUserId(user._id)
+
+        if (verifIsActiveRecovery)
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 404,
+                message: "Usuário já possui outra solicitação em processamento"
             })
 
         const today = new Date();
@@ -256,19 +251,16 @@ export default class UserService {
             code: randomCode
         }
 
-        const sendRecoveryEmailResend = await this.resendSenderService.sendRecoverPasswordEmail(sendEmailParams)
 
-        if (!sendRecoveryEmailResend) {
-            const sendRecoveryEmailNodemailer = await this.nodemailerSenderService.sendRecoverPasswordEmail(sendEmailParams)
+        const sendRecoveryEmail = await this.passwordRecoveryService.sendRecoveryEmail(sendEmailParams)
 
-            if (!sendRecoveryEmailNodemailer)
-                return new AppResponse({
-                    data: null,
-                    error: true,
-                    statusCode: 500,
-                    message: "Erro ao Enviar Email de Recuperação"
-                })
-        }
+        if (!sendRecoveryEmail)
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Enviar Email de Recuperação"
+            })
 
         const recoveryData = {
             user_id: user._id,
