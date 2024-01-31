@@ -98,7 +98,8 @@ export default class UserRepository {
                 {
                     $and: [
                         { owner: ownerId },
-                        { isDeleted: false }
+                        { isDeleted: false },
+                        { type: "worker" }
                     ]
                 }
             )

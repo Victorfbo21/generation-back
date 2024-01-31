@@ -72,6 +72,7 @@ export default class AuthService {
         const userToReturn = {
             name: user.name,
             email: user.email,
+            id: user._id,
             whatsapp: user.whatsapp,
             type: user.type,
             isDeleted: user.isDeleted,

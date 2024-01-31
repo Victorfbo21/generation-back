@@ -7,9 +7,14 @@ const UsersRouter = Router();
 
 const usersController = new UsersController();
 
+UsersRouter.get('/workers', authMiddleware, (req, res) => {
+    return usersController.workersByowner(req, res)
+})
+
 UsersRouter.post('/create', (req, res) => {
     return usersController.createUser(req, res)
 })
+
 UsersRouter.put('/update', authMiddleware, (req, res) => {
     return usersController.updateUser(req, res)
 })

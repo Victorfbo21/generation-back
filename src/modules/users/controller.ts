@@ -9,9 +9,9 @@ class UsersController {
     }
 
     async workersByowner(req: any, res: Response) {
-        const { userId } = req
+        const { user } = req
 
-        const result = await this.usersService.getWorkersByOwner(userId)
+        const result = await this.usersService.getWorkersByOwner(user.id)
 
         return res.status(result.statusCode).json(result)
     }

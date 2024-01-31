@@ -54,7 +54,7 @@ export default class UserService {
 
         let userToCreate
 
-        isWorker ? userToCreate = { ...commonData, owner: user.owner } : userToCreate = { ...commonData, function: user.function, password: user.password }
+        isWorker ? userToCreate = { ...commonData, owner: user.owner } : userToCreate = { ...commonData, function: user.function, password: encodePassword(user.password ?? "") }
 
         const created = await this.userRepository.createUser(userToCreate)
 

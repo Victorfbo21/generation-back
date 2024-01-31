@@ -48,6 +48,7 @@ async function authMiddleware(
             id: userId,
             type: userType
         };
+
         return next();
     } catch (err) {
         return response
