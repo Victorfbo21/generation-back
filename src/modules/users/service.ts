@@ -14,6 +14,7 @@ import AppResponse from '../../infra/http/httpresponse/appresponse';
 import NodeMailerSenderService from '../../infra/providers/emails/nodemailer/service';
 import { IUser } from './Interfaces/user.interface';
 import PasswordRecoveryService from '../password-recovery/service';
+import { ICreateWorkerInterface } from "./Interfaces/create-worker.interface"
 export default class UserService {
 
     private userRepository: UserRepository
@@ -46,35 +47,75 @@ export default class UserService {
             })
         }
 
-        const isWorker = user.type === 'worker'
-
-        const commonData = {
+        const userToCreate = {
                 name: user.name,
                 email: user.email,
                 whatsapp: user.whatsapp,
+            password: encodePassword(user.password ?? ""),
                 type: user.type
         }
-
-        let userToCreate
-
-        isWorker ? userToCreate = { ...commonData, owner: user.owner } : userToCreate = { ...commonData, function: user.function, password: encodePassword(user.password ?? "") }
 
         const created = await this.userRepository.createUser(userToCreate)
 
 
         if (!created)
             return new AppResponse({
-                    data: null,
-                    error: true,
-                    statusCode: 500,
-                    message: "Erro ao Criar Usuário"
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Criar Usuário"
             })
 
         return new AppResponse({
-                data: created,
-                error: false,
-                statusCode: 201,
-                message: "Usuário Criado com Sucesso!"
+            data: created,
+            error: false,
+            statusCode: 201,
+            message: "Usuário Criado com Sucesso!"
+        })
+
+    }
+
+    async createWorker(worker: ICreateWorkerInterface) {
+
+        const workerExists = await UserSchema.findOne(
+            {
+                worker: worker.email,
+                isDeleted: false
+            })
+
+        if (workerExists) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 400,
+                message: "Usuário Já Cadastrado"
+            })
+        }
+
+        const userToCreate = {
+            name: worker.name,
+            email: worker.email,
+            whatsapp: worker.whatsapp,
+            password: encodePassword(worker.password ?? ""),
+            type: worker.type
+        }
+
+        const created = await this.userRepository.createUser(userToCreate)
+
+
+        if (!created)
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Criar Usuário"
+            })
+
+        return new AppResponse({
+            data: created,
+            error: false,
+            statusCode: 201,
+            message: "Usuário Criado com Sucesso!"
         })
 
     }
