@@ -13,8 +13,16 @@ WorkRouter.get('/active', authMiddleware, (req: Request, res: Response) => {
     return worksController.getActiveWork(req, res)
 })
 
+WorkRouter.get('/isSale', authMiddleware, (req: Request, res: Response) => {
+    return worksController.getActiveWork(req, res)
+})
+
 WorkRouter.post('/create', authMiddleware, (req: Request, res: Response) => {
     return worksController.createWork(req, res)
+})
+
+WorkRouter.post('/sale', authMiddleware, (req: Request, res: Response) => {
+    return worksController.turnIsSale(req, res)
 })
 
 WorkRouter.patch('/update', authMiddleware, (req: Request, res: Response) => {

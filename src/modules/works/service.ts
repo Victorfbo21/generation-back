@@ -1,10 +1,11 @@
 import { ICreateWorkInterface } from "./interfaces/create-works.interface";
 import WorksSchema from "./schema";
-import AppResponse from "../../infra/http/httpresponse/appresponse";
+import AppResponse from "../../infra/http/httpresponse/AppResponse";
 import { IUpdateWorkInterface } from "./interfaces/update-work.interface";
 import { generateRandomCode } from "../../infra/utils/generateRandomCode";
 import WorkRepository from "./repository";
 import { IDisableWorkInterface } from "./interfaces/disable-work.interface";
+import { NIL } from "uuid";
 export default class WorksService {
 
     private workRepository: WorkRepository
@@ -33,11 +34,27 @@ export default class WorksService {
         })
     }
 
-    async getDisabledsWorks() {
-        // TODO
+    async getIsSaleWorks(owner: string) {
+
+        const saleWorks = await this.workRepository.getIsSaleWorks(owner)
+
+        if (!saleWorks)
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Encontrar Serviços Em Promoção"
+            })
+
+        return new AppResponse({
+            data: saleWorks,
+            error: false,
+            statusCode: 200,
+            message: "Serviços Encontrados com Sucesso!"
+        })
     }
 
-    async getIsSaleWorks() {
+    async getDisabledsWorks() {
         // TODO
     }
 
@@ -220,8 +237,41 @@ export default class WorksService {
 
     }
 
-    async turnIsSaleWork() {
-        // TODO
+    async turnIsSaleWork(workId: string, salePrice: string) {
+
+        const workToUpdate = await WorksSchema.findOne({ _id: workId })
+
+        if (!workToUpdate) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 400,
+                message: 'Serviço para realizar promoção Não encontrado'
+            })
+        }
+
+        const updated = await WorksSchema.findByIdAndUpdate(workId, {
+            $set: {
+                isSale: true,
+                salePrice: salePrice
+            }
+        }, { new: true })
+
+        if (!updated) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 402,
+                message: 'Erro ao Atualizar Serviço'
+            })
+        }
+
+        return new AppResponse({
+            data: updated._id,
+            error: false,
+            statusCode: 200,
+            message: 'Serviço Atualizado com Sucesso!'
+        })
     }
 
 

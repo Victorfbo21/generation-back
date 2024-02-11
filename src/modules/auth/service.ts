@@ -2,7 +2,7 @@ import { ILoginRequestDto } from './interfaces/login-request.interface';
 import UserSchema from '../users/schema';
 import TokenService from './tokens.service';
 import bcrypt from "bcrypt"
-import AppResponse from '../../infra/http/httpresponse/appresponse';
+import AppResponse from '../../infra/http/httpresponse/AppResponse';
 
 export default class AuthService {
 

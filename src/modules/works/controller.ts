@@ -17,6 +17,14 @@ export default class WorksController {
         return res.status(result.statusCode).json(result)
     }
 
+    async getisSaleWorks(req: any, res: Response) {
+
+        const { user } = req
+        const result = await this.worksService.getIsSaleWorks(user.id)
+
+        return res.status(result.statusCode).json(result)
+    }
+
     async createWork(req: any, res: Response) {
         const { workName, workPrice, category } = req.body
         const { user } = req
@@ -42,6 +50,15 @@ export default class WorksController {
         }
 
         const result = await this.worksService.updateWork(data)
+
+        return res.status(result.statusCode).json(result)
+    }
+
+    async turnIsSale(req: Request, res: Response) {
+
+        const { workId, salePrice } = req.body
+
+        const result = await this.worksService.turnIsSaleWork(workId, salePrice)
 
         return res.status(result.statusCode).json(result)
     }

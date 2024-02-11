@@ -10,7 +10,7 @@ import { IPromiseInterface } from "./Interfaces/promises.interface";
 import GoogleDriveService from '../../infra/providers/uploads/google-drive/service';
 import { IUpdatePasswordInterface } from './Interfaces/update-password.interface';
 import bcrypt from "bcrypt"
-import AppResponse from '../../infra/http/httpresponse/appResponse';
+import AppResponse from '../../infra/http/httpresponse/AppResponse';
 import NodeMailerSenderService from '../../infra/providers/emails/nodemailer/service';
 import { IUser } from './Interfaces/user.interface';
 import PasswordRecoveryService from '../password-recovery/service';
