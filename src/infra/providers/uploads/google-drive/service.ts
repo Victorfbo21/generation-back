@@ -8,6 +8,9 @@ import {
 } from "../interfaces/IUploadService.interface";
 import { Readable } from "stream";
 import './google.json'
+import {
+    getViewIdFromImageIdGoogleDrive
+} from "./utils/publicURL"
 
 export default class GoogleDriveService implements IUploadService {
 
@@ -33,6 +36,7 @@ export default class GoogleDriveService implements IUploadService {
                 "universe_domain": this.google_api_universe_domain
             }
 
+
             const auth = new google.auth.GoogleAuth({
                 credentials: authBody,
                 scopes: [process.env.GOOGLE_API_AUTH || ""]
@@ -42,6 +46,7 @@ export default class GoogleDriveService implements IUploadService {
                 version: 'v3',
                 auth
             })
+
 
             const fileMetaData = {
                 'name': params.fileData.name,
@@ -59,25 +64,29 @@ export default class GoogleDriveService implements IUploadService {
             }
             const response = await driveService.files.create(requestBody)
 
+
             if (response.status != 200) {
                 return {
                     error: true,
                     fileURL: null
                 }
             }
+
+            const newVieweID = await getViewIdFromImageIdGoogleDrive(response?.data?.id ?? "")
+
             return {
                 error: false,
-                fileURL: `${process.env.GOOGLE_EXPORT_URL}${response.data.id}`
+                fileURL: `${process.env.GOOGLE_API_DRIVE_VIEWER}${newVieweID}`
             }
         }
         catch (err) {
-            console.log(err)
             return {
                 error: true,
                 fileURL: null
             }
         }
     }
+
     deleteFile(filename: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
