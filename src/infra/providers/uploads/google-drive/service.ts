@@ -54,7 +54,7 @@ export default class GoogleDriveService implements IUploadService {
             }
 
             const media = {
-                mimeType: params.fileData.mimeType,
+                mimeType: params.fileData.mimetype,
                 body: Readable.from(params.fileData.data)
             }
             const requestBody = {

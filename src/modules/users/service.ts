@@ -12,6 +12,7 @@ import bcrypt from "bcrypt"
 import { AppResponse } from '../../infra/http/httpresponse/appResponse';
 import { IUser } from './Interfaces/user.interface';
 import PasswordRecoveryService from '../password-recovery/service';
+import S3Service from '../../infra/providers/uploads/s3/service';
 import { ICreateWorkerInterface } from "./Interfaces/create-worker.interface"
 export default class UserService {
 
@@ -19,6 +20,7 @@ export default class UserService {
     private passwordRecoveryRepository: PasswordRecoveryRepository
     private passwordRecoveryService: PasswordRecoveryService
     private googleDriveService: GoogleDriveService
+    private s3Service: S3Service
     private allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
 
     constructor() {
@@ -26,6 +28,7 @@ export default class UserService {
         this.passwordRecoveryRepository = new PasswordRecoveryRepository()
         this.googleDriveService = new GoogleDriveService()
         this.passwordRecoveryService = new PasswordRecoveryService()
+        this.s3Service = new S3Service()
     }
 
     async me(user: { type: string, id: string }) {
@@ -370,7 +373,7 @@ export default class UserService {
             fileData: updateData.file
         }
 
-        const uploadImageResponse = await this.googleDriveService.uploadFile(uploadImageData)
+        const uploadImageResponse = await this.s3Service.uploadFile(uploadImageData)
 
         if (uploadImageResponse.error) {
             return new AppResponse({
@@ -384,6 +387,7 @@ export default class UserService {
         const saveProfileImage = await UserSchema.findByIdAndUpdate(updateData.userId, { profile_image: uploadImageResponse.fileURL })
 
         if (!saveProfileImage)
+
             return new AppResponse({
                 data: null,
                 error: true,
