@@ -31,6 +31,11 @@ UsersRouter.put('/profile-image', authMiddleware, (req: Request, res: Response) 
     return usersController.updateProfileImage(req, res)
 })
 
+UsersRouter.put('/upload-images', authMiddleware, (req: Request, res: Response) => {
+    return usersController.updatePDFs(req, res)
+})
+
+
 UsersRouter.get('/me', authMiddleware, (req, res) => {
     return usersController.me(req, res)
 })

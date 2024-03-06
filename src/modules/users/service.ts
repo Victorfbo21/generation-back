@@ -14,6 +14,7 @@ import { IUser } from './Interfaces/user.interface';
 import PasswordRecoveryService from '../password-recovery/service';
 import S3Service from '../../infra/providers/uploads/s3/service';
 import { ICreateWorkerInterface } from "./Interfaces/create-worker.interface"
+import { IFileInterface } from '../../infra/providers/uploads/interfaces/IFile.interface';
 export default class UserService {
 
     private userRepository: UserRepository
@@ -35,6 +36,8 @@ export default class UserService {
 
         const findedUser = await this.userRepository.getUserById(user.id)
 
+        const publicProfileImage = await this.s3Service.getPublicURL(findedUser?.profile_image ?? "")
+
         if (!findedUser) {
             return new AppResponse({
                 data: null,
@@ -46,7 +49,13 @@ export default class UserService {
 
         return new AppResponse({
             data: {
-                user: findedUser
+                user: {
+                    name: findedUser.name,
+                    type: findedUser.type,
+                    owner: findedUser.owner,
+                    isDeleted: findedUser.isDeleted,
+                    profile_image: publicProfileImage
+                }
             },
             error: false,
             statusCode: 200,
@@ -360,6 +369,7 @@ export default class UserService {
             })
         }
 
+
         if (!this.allowedTypes.includes(updateData.file.mimetype))
             return new AppResponse({
                 data: null,
@@ -384,7 +394,7 @@ export default class UserService {
             })
         }
 
-        const saveProfileImage = await UserSchema.findByIdAndUpdate(updateData.userId, { profile_image: uploadImageResponse.fileURL })
+        const saveProfileImage = await UserSchema.findByIdAndUpdate(updateData.userId, { profile_image: updateData.file.name })
 
         if (!saveProfileImage)
 
@@ -403,6 +413,63 @@ export default class UserService {
         })
 
 
+    }
+
+    async updatePDFs(updateData: any) {
+
+        if (!updateData.file) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 400,
+                message: "Imagens não enviadas"
+            })
+        }
+
+        const validateImageTypes = this.validateImagesTypes(updateData.file)
+
+        if (validateImageTypes.length != 0)
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 400,
+                message: "Tipo de Imagem não Suportado"
+            })
+
+
+        for (const image of updateData.file) {
+            const uploadImageData = {
+                filename: image.name,
+                fileData: image
+            }
+
+            const uploadImageResponse = await this.s3Service.uploadFile(uploadImageData)
+
+            if (uploadImageResponse.error) {
+                return new AppResponse({
+                    data: null,
+                    error: true,
+                    statusCode: 500,
+                    message: "Erro ao Fazer Upload Da Imagem"
+                })
+            }
+        }
+
+        return new AppResponse({
+            data: null,
+            error: false,
+            statusCode: 200,
+            message: 'Imagens Enviadas com Sucesso!'
+        })
+
+
+    }
+
+    private validateImagesTypes(images: IFileInterface[]) {
+
+        const inValidTypes = images.filter((i) => this.allowedTypes.includes(i.mimetype) === false)
+
+        return inValidTypes
     }
 
 

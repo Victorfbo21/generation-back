@@ -84,10 +84,25 @@ class UsersController {
 
         const updateData = {
             userId: user.id,
-            file: files?.profile
         }
 
-        const result = await this.usersService.updateProfileImage(updateData)
+        const filter = Array.isArray(files.profile) ? { ...updateData, file: files.profile } : { ...updateData, file: [files.profile] }
+
+        const result = await this.usersService.updateProfileImage(filter)
+
+        return res.status(result.statusCode).json(result)
+    }
+
+    async updatePDFs(req: any, res: Response) {
+        const { user, files } = req
+
+        const updateData = {
+            userId: user.id,
+        }
+
+        const filter = Array.isArray(files.images) ? { ...updateData, file: files.images } : { ...updateData, file: [files.images] }
+
+        const result = await this.usersService.updatePDFs(filter)
 
         return res.status(result.statusCode).json(result)
     }

@@ -17,15 +17,9 @@ export default class S3Service implements IUploadService {
     }
 
 
-    async uploadFile(params: IUploadFileParams): Promise<any> {
+    async uploadFile(params: IUploadFileParams): Promise<IUploadFileResponse> {
 
         const uploaded = await this.upload(params?.filename ?? "", params.fileData.data, "base64", params.fileData.mimetype)
-
-        const publicURL = await this.s3.getSignedUrlPromise('getObject', {
-            Bucket: process.env.AWS_BUCKET ?? "",
-            Key: params.filename,
-            Expires: null
-        })
 
         if (!uploaded.ETag) {
             return {
@@ -36,7 +30,7 @@ export default class S3Service implements IUploadService {
 
         return {
             error: false,
-            fileURL: publicURL
+            fileURL: uploaded.Location
         }
 
     }
@@ -71,11 +65,21 @@ export default class S3Service implements IUploadService {
 
         const { Location, ETag } = await this.s3.upload(params).promise()
 
-
         return {
             Location,
             ETag
         }
+    }
+
+    async getPublicURL(key: string) {
+
+        const publicURL = await this.s3.getSignedUrlPromise('getObject', {
+            Bucket: process.env.AWS_BUCKET ?? "",
+            Key: key,
+            Expires: null
+        })
+
+        return publicURL
     }
 
 
