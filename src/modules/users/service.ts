@@ -415,7 +415,7 @@ export default class UserService {
 
     }
 
-    async updatePDFs(updateData: any) {
+    async uploadPDFs(updateData: any) {
 
         if (!updateData.file) {
             return new AppResponse({

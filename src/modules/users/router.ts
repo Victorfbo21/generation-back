@@ -32,7 +32,7 @@ UsersRouter.put('/profile-image', authMiddleware, (req: Request, res: Response) 
 })
 
 UsersRouter.put('/upload-images', authMiddleware, (req: Request, res: Response) => {
-    return usersController.updatePDFs(req, res)
+    return usersController.uploadPDFs(req, res)
 })
 
 
