@@ -1,3 +1,5 @@
+import { IFileInterface } from "./IFile.interface"
+
 export interface IUploadFileInfo {
     filename: string,
     fileURL: string,
@@ -6,7 +8,7 @@ export interface IUploadFileInfo {
 
 export interface IUploadFileParams {
     filename?: string, //path junto com filename ex: id/photo.jpg
-    fileData: any
+    fileData: IFileInterface
 }
 export interface IUploadFileResponse {
     fileURL: string | null,
