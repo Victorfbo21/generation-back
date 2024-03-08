@@ -7,7 +7,7 @@ import {
     IUploadService
 } from "../interfaces/IUploadService.interface";
 import { Readable } from "stream";
-import './google.json'
+
 import {
     getViewIdFromImageIdGoogleDrive
 } from "./utils/publicURL"
