@@ -1,6 +1,6 @@
 import { ICreateWorkInterface } from "./interfaces/create-works.interface";
 import WorksSchema from "./schema";
-import AppResponse from "../../infra/http/httpresponse/AppResponse";
+import { AppResponse } from "../../infra/http/httpresponse/appResponse";
 import { IUpdateWorkInterface } from "./interfaces/update-work.interface";
 import { generateRandomCode } from "../../infra/utils/generateRandomCode";
 import WorkRepository from "./repository";

@@ -3,23 +3,19 @@ import CreateUserInterface from "./Interfaces/create-user.interface";
 import UserRepository from "./repository";
 import UserSchema from "./schema"
 import encodePassword from "../../infra/utils/encodePassword";
-import ResendSenderService from "../../infra/providers/emails/resend/service";
 import { generateRandomCode } from "../../infra/utils/generateRandomCode";
 import PasswordRecoveryRepository from "../password-recovery/repository";
 import { IPromiseInterface } from "./Interfaces/promises.interface";
 import GoogleDriveService from '../../infra/providers/uploads/google-drive/service';
 import { IUpdatePasswordInterface } from './Interfaces/update-password.interface';
 import bcrypt from "bcrypt"
-import AppResponse from '../../infra/http/httpresponse/AppResponse';
-import NodeMailerSenderService from '../../infra/providers/emails/nodemailer/service';
+import { AppResponse } from '../../infra/http/httpresponse/appResponse';
 import { IUser } from './Interfaces/user.interface';
 import PasswordRecoveryService from '../password-recovery/service';
 import { ICreateWorkerInterface } from "./Interfaces/create-worker.interface"
 export default class UserService {
 
     private userRepository: UserRepository
-    private resendSenderService: ResendSenderService
-    private nodemailerSenderService: NodeMailerSenderService
     private passwordRecoveryRepository: PasswordRecoveryRepository
     private passwordRecoveryService: PasswordRecoveryService
     private googleDriveService: GoogleDriveService
@@ -27,11 +23,32 @@ export default class UserService {
 
     constructor() {
         this.userRepository = new UserRepository();
-        this.resendSenderService = new ResendSenderService()
         this.passwordRecoveryRepository = new PasswordRecoveryRepository()
         this.googleDriveService = new GoogleDriveService()
-        this.nodemailerSenderService = new NodeMailerSenderService()
         this.passwordRecoveryService = new PasswordRecoveryService()
+    }
+
+    async me(user: { type: string, id: string }) {
+
+        const findedUser = await this.userRepository.getUserById(user.id)
+
+        if (!findedUser) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: 'Erro ao Encontrar Usuário'
+            })
+        }
+
+        return new AppResponse({
+            data: {
+                user: findedUser
+            },
+            error: false,
+            statusCode: 200,
+            message: 'Usuário Encontrado com Sucesso!'
+        })
     }
 
     async createUser(user: CreateUserInterface) {
@@ -48,11 +65,11 @@ export default class UserService {
         }
 
         const userToCreate = {
-                name: user.name,
-                email: user.email,
-                whatsapp: user.whatsapp,
+            name: user.name,
+            email: user.email,
+            whatsapp: user.whatsapp,
             password: encodePassword(user.password ?? ""),
-                type: user.type
+            type: user.type
         }
 
         const created = await this.userRepository.createUser(userToCreate)
@@ -380,6 +397,7 @@ export default class UserService {
             statusCode: 200,
             message: "Imagem Salva com Sucesso!"
         })
+
 
     }
 

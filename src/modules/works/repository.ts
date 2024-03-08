@@ -21,21 +21,15 @@ export default class WorkRepository {
         }
     }
 
-    async getIsSaleWorks(owner: string) {
+    async getDisablesWorks() {
         try {
-            const promotionWorks = await WorksSchema.find({
-                $and: [{
-                    isActive: true,
-                    isDeleted: false,
-                    owner: owner,
-                    isSale: true
-                }]
+            const works = await WorksSchema.find({
+                isActive: false
             })
 
-            return promotionWorks
+            return works
         }
-        catch (err) {
-            console.error(err)
+        catch (error) {
             return null
         }
     }

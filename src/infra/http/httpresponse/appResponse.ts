@@ -1,6 +1,6 @@
 import { HttpResponseDto } from "./httpresponse.dto";
 
-class AppResponse {
+export class AppResponse {
     public readonly data: any
     public readonly error: boolean
     public readonly statusCode: number
@@ -14,5 +14,4 @@ class AppResponse {
 
     }
 }
-export default AppResponse;
 

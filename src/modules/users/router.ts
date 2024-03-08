@@ -31,8 +31,8 @@ UsersRouter.put('/profile-image', authMiddleware, (req: Request, res: Response) 
     return usersController.updateProfileImage(req, res)
 })
 
-UsersRouter.get('/:id', authMiddleware, (req, res) => {
-    return usersController.getUserById(req, res)
+UsersRouter.get('/me', authMiddleware, (req, res) => {
+    return usersController.me(req, res)
 })
 
 export default UsersRouter;
