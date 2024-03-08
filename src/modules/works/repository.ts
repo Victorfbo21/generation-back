@@ -21,6 +21,18 @@ export default class WorkRepository {
         }
     }
 
+    async getDisablesWorks() {
+        try {
+            const works = await WorksSchema.find({
+                isActive: false
+            })
+
+            return works
+        }
+        catch (error) {
+            return null
+        }
+    }
 
     async updateWork(workId: string, payload: Partial<IWorkInterface>) {
         try {
