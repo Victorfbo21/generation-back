@@ -77,11 +77,11 @@ export default class UserService {
         }
 
         const userToCreate = {
-                name: user.name,
-                email: user.email,
-                whatsapp: user.whatsapp,
+            name: user.name,
+            email: user.email,
+            whatsapp: user.whatsapp,
             password: encodePassword(user.password ?? ""),
-                type: user.type
+            type: user.type
         }
 
         const created = await this.userRepository.createUser(userToCreate)
