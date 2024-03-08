@@ -51,6 +51,7 @@ export default class UserService {
             data: {
                 user: {
                     name: findedUser.name,
+                    email: findedUser.email,
                     type: findedUser.type,
                     owner: findedUser.owner,
                     isDeleted: findedUser.isDeleted,

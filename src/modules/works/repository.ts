@@ -34,6 +34,22 @@ export default class WorkRepository {
         }
     }
 
+    async getIsSaleWorks(ownerId: string) {
+        try {
+            const works = await WorksSchema.find({
+                $and: [{
+                    owner: ownerId,
+                    isActive: false
+                }]
+            })
+
+            return works
+        }
+        catch (error) {
+            return null
+        }
+    }
+
     async updateWork(workId: string, payload: Partial<IWorkInterface>) {
         try {
             const workUpdated = await WorksSchema.findByIdAndUpdate(workId,
