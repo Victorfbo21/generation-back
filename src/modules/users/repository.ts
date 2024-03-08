@@ -39,7 +39,7 @@ export default class UserRepository {
 
     async getUserByEmail(email: string): Promise<any> {
         try {
-            const user = await UserSchema.findOne({ email: email })
+            const user = await UserSchema.findOne({ email: email, isDeleted: false })
 
             return user
         }
@@ -86,6 +86,25 @@ export default class UserRepository {
             const users = await UserSchema.find()
 
             return users
+        }
+        catch (err) {
+            throw new Error("Error Finding Users")
+        }
+    }
+
+    async getWorkersByOwner(ownerId: string) {
+        try {
+            const workers = await UserSchema.find(
+                {
+                    $and: [
+                        { owner: ownerId },
+                        { isDeleted: false },
+                        { type: "worker" }
+                    ]
+                }
+            )
+
+            return workers
         }
         catch (err) {
             throw new Error("Error Finding Users")

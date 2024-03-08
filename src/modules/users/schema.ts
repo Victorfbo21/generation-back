@@ -5,10 +5,11 @@ const type = ["owner", "admin", "worker"]
 const UserSchema = new mongoose.Schema({
     name: { type: String },
     email: { type: String },
-    password: { type: String, require: true },
-    profile_imagem: { type: String },
+    password: { type: String, require: false },
+    profile_image: { type: String },
     whatsapp: { type: String },
     type: { type: String, enum: type, default: "owner" },
+    owner: { type: String },
     function: { type: String },
     isDeleted: { type: Boolean, default: false }
 }, {

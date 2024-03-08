@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { UserTypeEnum } from "../../../modules/users/Interfaces/user-type.enum";
 import UserService from "../../../modules/users/service";
-import AppError from "../errors";
+import { JwtPayload } from "jsonwebtoken";
 
 const userService = new UserService();
 
@@ -15,43 +15,49 @@ async function authMiddleware(
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
-        response.status(401).json({ message: "Token missing" })
+        return response.status(401).json({ message: "Token missing" });
     }
 
-    const [, token] = authHeader?.split(" ");
+    const tokenArray = authHeader.split(" ");
+
+    if (tokenArray.length !== 2) {
+        return response.status(401).json({ message: "Invalid token format" });
+    }
+
+    const [, token] = tokenArray;
 
     try {
-        const decoded = jwt.verify(token as string, process.env.APP_SECRET ?? "");
+        const decoded = jwt.verify(token as string, process.env.TOKEN_APP_SECRET ?? "")
 
-        if (!decoded || !decoded.sub) {
+        if (!decoded || typeof decoded !== 'object' || !('userId' in decoded)) {
             return response.status(401).json({
                 error: true,
-                code: "token.expired",
-                message: "Token invalid.",
+                code: "token.invalid",
+                message: "Invalid token format or missing userId.",
             });
         }
 
-        const userId = decoded.sub.toString();
+        const userId = decoded.userId
+        const userType = decoded.type
 
-        const user = await userService.getUserById(userId);
-
-        if (user.type === UserTypeEnum.owner) {
-            return {
-                message: "Forbidden",
-                status: 403
-            }
+        if (userType === UserTypeEnum.worker) {
+            return response.status(403).json({ message: "Forbidden" })
         }
 
         request.user = {
-            id: user.id,
-            type: user.type
+            id: userId,
+            type: userType
         };
 
         return next();
     } catch (err) {
         return response
             .status(401)
-            .json({ error: true, code: "token.expired", message: "Token invalid." });
+            .json({
+                error: true,
+                code: "token.expired",
+                message: "Token invalid."
+            });
     }
 }
 

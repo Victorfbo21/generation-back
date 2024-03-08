@@ -1,37 +1,31 @@
-import { ISenderEmailServiceInterface } from "../interfaces/send-email-service.interface";
 import { ISendRecoveryPasswordEmail } from "../interfaces/recovery-password-email.interface";
-import pug from 'pug'
-import path from 'path'
-import dotenv from 'dotenv'
-dotenv.config()
-import ISendEmailInterface from "../interfaces/send-email.interface";
-import { Resend } from "resend";
+import { ISenderEmailServiceInterface } from "../interfaces/send-email-service.interface";
+import { transport } from "./index";
+import * as  path from 'path'
+import * as  pug from 'pug'
 
-export default class ResendSenderService implements ISenderEmailServiceInterface {
 
-    private fromAddress: string
-    private resend: Resend
+export default class NodeMailerSenderService implements ISenderEmailServiceInterface {
+
+    private fromAddress: String
 
     constructor() {
         this.fromAddress = `${process.env.EMAIL_FROM_ADDRESS}`
-        this.resend = new Resend(process.env.RESEND_API_KEY)
     }
 
-    async sendEMail(mailData: ISendEmailInterface): Promise<any> {
+    async sendEMail(mailData: any): Promise<boolean> {
         try {
-
             const message = {
                 from: this.fromAddress,
-                to: mailData.to,
                 subject: mailData.subject,
-                html: mailData.body
+                to: mailData.to,
+                html: mailData.body,
             }
 
-            const { error } = await this.resend.emails.send(message)
+            const result = await transport.sendMail(message)
 
-            if (error) {
+            if (!result)
                 return false
-            }
 
             return true
         }
@@ -39,7 +33,7 @@ export default class ResendSenderService implements ISenderEmailServiceInterface
             return false
         }
     }
-    async sendRecoverPasswordEmail(params: ISendRecoveryPasswordEmail): Promise<any> {
+    async sendRecoverPasswordEmail(params: ISendRecoveryPasswordEmail): Promise<boolean> {
         try {
             const templatePath = path.resolve(path.dirname(__dirname),
                 "..",
@@ -47,24 +41,21 @@ export default class ResendSenderService implements ISenderEmailServiceInterface
                 "templates",
                 "recover-password.pug"
             );
-
             const compiledFunction = pug.compileFile(templatePath);
-
 
             const mailData = {
                 to: params.to,
                 subject: 'Recuperação de Senha',
-                body: compiledFunction({ code: params.code })
-            }
+                body: compiledFunction({ code: params.code }),
+            };
 
-            // return this.sendEMail(mailData)
-            return false
-        }
-        catch (err) {
-            return false
+            return this.sendEMail(mailData);
+        } catch (error) {
+            console.error('Mailchimp error:', error);
+            return false;
         }
     }
-    async sendUpdatePasswordConfirmation(to: string): Promise<any> {
+    async sendUpdatePasswordConfirmation(to: string): Promise<boolean> {
         try {
             const templatePath = path.resolve(path.dirname(__dirname),
                 "..",
@@ -82,14 +73,14 @@ export default class ResendSenderService implements ISenderEmailServiceInterface
                 body: compiledFunction()
             }
 
-            // return this.sendEMail(mailData)
+            return this.sendEMail(mailData)
             return false
         }
         catch (err) {
             return false
         }
     }
-    async sendUpdateEmail(params: any): Promise<any> {
+    sendUpdateEmail(params: any): Promise<any> {
         throw new Error("Method not implemented.");
     }
 

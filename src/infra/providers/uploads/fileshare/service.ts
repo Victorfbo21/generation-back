@@ -74,6 +74,7 @@ export class FileShareService implements IUploadService {
                 );
 
                 return {
+                    error: false,
                     fileURL: (`${process.env.SHARED_UPLOAD_URL_BASE}`).replace("@@HASH@@", sharedFile.data.hash)
                 };
             } catch (error) {
