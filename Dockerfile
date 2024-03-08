@@ -1,4 +1,4 @@
-FROM node:17-buster-slim AS base
+FROM node:18-buster-slim AS base
 
 
 WORKDIR /app
@@ -8,6 +8,6 @@ COPY . .
 
 RUN chown node:node /app
 
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["npm", "start"]
