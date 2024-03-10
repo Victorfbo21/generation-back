@@ -21,9 +21,7 @@ export default class NodeMailerSenderService implements ISenderEmailServiceInter
                 to: mailData.to,
                 html: mailData.body,
             }
-
             const result = await transport.sendMail(message)
-
             if (!result)
                 return false
 
@@ -48,7 +46,6 @@ export default class NodeMailerSenderService implements ISenderEmailServiceInter
                 subject: 'Recuperação de Senha',
                 body: compiledFunction({ code: params.code }),
             };
-
             return this.sendEMail(mailData);
         } catch (error) {
             console.error('Mailchimp error:', error);

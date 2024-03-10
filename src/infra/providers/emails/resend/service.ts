@@ -57,8 +57,7 @@ export default class ResendSenderService implements ISenderEmailServiceInterface
                 body: compiledFunction({ code: params.code })
             }
 
-            // return this.sendEMail(mailData)
-            return false
+            return this.sendEMail(mailData)
         }
         catch (err) {
             return false
@@ -82,8 +81,7 @@ export default class ResendSenderService implements ISenderEmailServiceInterface
                 body: compiledFunction()
             }
 
-            // return this.sendEMail(mailData)
-            return false
+            return this.sendEMail(mailData)
         }
         catch (err) {
             return false

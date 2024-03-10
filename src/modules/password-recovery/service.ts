@@ -21,13 +21,12 @@ export default class PasswordRecoveryService {
 
         const sendRecoveryEmailResend = await this.resendSenderService.sendRecoverPasswordEmail(sendEmailParams)
 
-
         if (!sendRecoveryEmailResend) {
             const sendRecoveryEmailNodemailer = await this.nodemailerSenderService.sendRecoverPasswordEmail(sendEmailParams)
-
             if (!sendRecoveryEmailNodemailer) {
                 return false
             }
+            return true
         }
         return true
     }

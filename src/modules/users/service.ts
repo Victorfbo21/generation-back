@@ -376,6 +376,7 @@ export default class UserService {
                 data: null,
                 error: true,
                 statusCode: 400,
+
                 message: "Tipo de Imagem não Suportado"
             })
 
