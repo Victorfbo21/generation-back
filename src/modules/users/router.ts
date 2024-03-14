@@ -35,7 +35,6 @@ UsersRouter.put('/upload-images', authMiddleware, (req: Request, res: Response) 
     return usersController.uploadPDFs(req, res)
 })
 
-
 UsersRouter.get('/me', authMiddleware, (req, res) => {
     return usersController.me(req, res)
 })
