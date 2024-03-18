@@ -1,6 +1,6 @@
 export interface ICreateWorkInterface {
     category: string,
     workName: string,
-    workPrice: string,
+    workPrice: number,
     owner: string
 }

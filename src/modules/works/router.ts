@@ -37,4 +37,8 @@ WorkRouter.post('/delete', authMiddleware, (req: Request, res: Response) => {
     return worksController.deleteWork(req, res)
 })
 
+WorkRouter.put('/create/csv', (req: Request, res: Response) => {
+    return worksController.uploadWorksCSV(req, res)
+})
+
 export default WorkRouter;

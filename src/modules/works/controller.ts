@@ -82,4 +82,11 @@ export default class WorksController {
 
         return res.status(result.statusCode).json(result)
     }
+
+    async uploadWorksCSV(req: any, res: Response) {
+
+        const { user, files } = req
+
+        console.log(user, files)
+    }
 }
