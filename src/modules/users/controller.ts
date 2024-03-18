@@ -34,6 +34,20 @@ class UsersController {
         return res.status(result.statusCode).json(result)
     }
 
+    async createWorker(req: any, res: Response) {
+        const { body , user } = req
+
+        const data = {
+        ... body,
+        owner: user?.id,
+        type: "worker",
+        }
+
+        const result = await this.usersService.createWorker(data)
+
+        return res.status(result.statusCode).json(result)
+    }
+
     async updateUser(req: any, res: Response) {
         const { user } = req
         const { payload } = req.body

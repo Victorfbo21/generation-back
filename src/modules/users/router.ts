@@ -14,6 +14,9 @@ UsersRouter.get('/workers', authMiddleware, (req, res) => {
 UsersRouter.post('/create', (req, res) => {
     return usersController.createUser(req, res)
 })
+UsersRouter.post('/workers/create', authMiddleware , (req, res) => {
+    return usersController.createWorker(req, res)
+})
 
 UsersRouter.put('/update', authMiddleware, (req, res) => {
     return usersController.updateUser(req, res)

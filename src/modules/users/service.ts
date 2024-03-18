@@ -107,6 +107,7 @@ export default class UserService {
 
     async createWorker(worker: ICreateWorkerInterface) {
 
+
         const workerExists = await UserSchema.findOne(
             {
                 worker: worker.email,
@@ -125,8 +126,9 @@ export default class UserService {
         const userToCreate = {
             name: worker.name,
             email: worker.email,
+            function : worker.function,
             whatsapp: worker.whatsapp,
-            password: encodePassword(worker.password ?? ""),
+            owner : worker.owner,
             type: worker.type
         }
 
