@@ -22,7 +22,7 @@ export default class UserService {
     private passwordRecoveryService: PasswordRecoveryService
     private googleDriveService: GoogleDriveService
     private s3Service: S3Service
-    private allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+    private allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf', 'text/csv'];
 
     constructor() {
         this.userRepository = new UserRepository();
