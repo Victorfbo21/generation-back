@@ -1,4 +1,4 @@
 export interface IDisableWorkInterface {
-    workId: string,
+    toDisableId: string,
     owner: string
 }

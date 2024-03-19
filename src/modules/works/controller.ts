@@ -9,10 +9,10 @@ export default class WorksController {
         this.worksService = new WorksService()
     }
 
-    async getActiveWork(req: any, res: Response) {
+    async getWorks(req: any, res: Response) {
 
         const { user } = req
-        const result = await this.worksService.getActiveWorks(user.id)
+        const result = await this.worksService.getWorks(user.id)
 
         return res.status(result.statusCode).json(result)
     }
@@ -64,10 +64,10 @@ export default class WorksController {
     }
 
     async disableWork(req: any, res: Response) {
-        const { workId } = req.body
+        const { toDisableId } = req.body
         const { user } = req
         const data = {
-            workId,
+            toDisableId,
             owner: user.id
         }
         const result = await this.worksService.disabledWork(data)
@@ -75,10 +75,23 @@ export default class WorksController {
         return res.status(result.statusCode).json(result)
     }
 
-    async deleteWork(req: Request, res: Response) {
-        const { workId } = req.body
 
-        const result = await this.worksService.deleteWork(workId)
+    async activeWork(req: any, res: Response) {
+        const { toActiveId } = req.body
+        const { user } = req
+        const data = {
+            toActiveId,
+            owner: user.id
+        }
+        const result = await this.worksService.activeWork(data)
+
+        return res.status(result.statusCode).json(result)
+    }
+
+    async deleteWork(req: Request, res: Response) {
+        const { toDeleteId } = req.body
+
+        const result = await this.worksService.deleteWork(toDeleteId)
 
         return res.status(result.statusCode).json(result)
     }

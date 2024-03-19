@@ -6,6 +6,7 @@ import { generateRandomCode } from "../../infra/utils/generateRandomCode";
 import WorkRepository from "./repository";
 import { IDisableWorkInterface } from "./interfaces/disable-work.interface";
 import { NIL } from "uuid";
+import { IActiveWorkInterface } from "./interfaces/active-work.interface";
 export default class WorksService {
 
     private workRepository: WorkRepository
@@ -14,7 +15,7 @@ export default class WorksService {
         this.workRepository = new WorkRepository();
     }
 
-    async getActiveWorks(owner: string) {
+    async getWorks(owner: string) {
 
         const activedWorks = await this.workRepository.getActiveWorks(owner)
 
@@ -131,7 +132,7 @@ export default class WorksService {
 
     async disabledWork(data: IDisableWorkInterface) {
 
-        const workToDisable = await WorksSchema.findOne({ _id: Object(data.workId) })
+        const workToDisable = await WorksSchema.findOne({ _id: Object(data.toDisableId) })
 
         if (!workToDisable) {
             return new AppResponse({
@@ -161,8 +162,40 @@ export default class WorksService {
         })
 
     }
+    async activeWork(data: IActiveWorkInterface) {
 
-    async activeWork(workId: string) {
+        const workToActive = await WorksSchema.findOne({ _id: data.toActiveId })
+
+        if (!workToActive) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 400,
+                message: "Serviço Não Encontrado na Base de Dados"
+            })
+        }
+
+        const activedWork = this.workRepository.activeWork(data)
+
+        if (!activedWork) {
+            return new AppResponse({
+                data: null,
+                error: true,
+                statusCode: 500,
+                message: "Erro ao Ativar Serviço"
+            })
+        }
+
+        return new AppResponse({
+            data: true,
+            error: false,
+            statusCode: 200,
+            message: "Serviço Ativado com Sucesso!"
+        })
+
+    }
+
+    async activeWorks(workId: string) {
         const workToActive = await WorksSchema.findOne({ _id: Object(workId) })
 
         if (!workToActive) {

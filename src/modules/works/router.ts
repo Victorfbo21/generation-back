@@ -9,12 +9,12 @@ const worksController = new WorksController();
 
 
 
-WorkRouter.get('/active', authMiddleware, (req: Request, res: Response) => {
-    return worksController.getActiveWork(req, res)
+WorkRouter.get('/', authMiddleware, (req: Request, res: Response) => {
+    return worksController.getWorks(req, res)
 })
 
 WorkRouter.get('/isSale', authMiddleware, (req: Request, res: Response) => {
-    return worksController.getActiveWork(req, res)
+    return worksController.getWorks(req, res)
 })
 
 WorkRouter.post('/create', authMiddleware, (req: Request, res: Response) => {
@@ -29,8 +29,12 @@ WorkRouter.patch('/update', authMiddleware, (req: Request, res: Response) => {
     return worksController.updateWork(req, res)
 })
 
-WorkRouter.patch('/disable', authMiddleware, (req: Request, res: Response) => {
+WorkRouter.post('/disable', authMiddleware, (req: Request, res: Response) => {
     return worksController.disableWork(req, res)
+})
+
+WorkRouter.post('/active', authMiddleware, (req: Request, res: Response) => {
+    return worksController.activeWork(req, res)
 })
 
 WorkRouter.post('/delete', authMiddleware, (req: Request, res: Response) => {
