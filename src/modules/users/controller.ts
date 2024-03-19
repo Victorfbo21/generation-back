@@ -120,6 +120,15 @@ class UsersController {
 
         return res.status(result.statusCode).json(result)
     }
+
+    async deleteWorker(req : Request , res : Response){
+        
+        const { toDeletedId } = req.body
+
+        const result = await this.usersService.deleteWorker(toDeletedId)
+
+        return res.status(result.statusCode).json(result)
+    }
 }
 
 export { UsersController }

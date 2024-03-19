@@ -18,6 +18,10 @@ UsersRouter.post('/workers/create', authMiddleware , (req, res) => {
     return usersController.createWorker(req, res)
 })
 
+UsersRouter.post('/workers/delete', authMiddleware , (req, res) => {
+    return usersController.deleteWorker(req, res)
+})
+
 UsersRouter.put('/update', authMiddleware, (req, res) => {
     return usersController.updateUser(req, res)
 })

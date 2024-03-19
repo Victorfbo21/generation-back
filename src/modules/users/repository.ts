@@ -110,4 +110,20 @@ export default class UserRepository {
             throw new Error("Error Finding Users")
         }
     }
+
+    async deleteWorker(workerId : string){
+        try{
+
+            await UserSchema.findByIdAndUpdate(workerId , {
+                $set : {
+                    isDeleted : true
+                }
+            },{new : true})
+
+            return true
+        }
+        catch(error){
+            return false
+        }
+    }   
 }

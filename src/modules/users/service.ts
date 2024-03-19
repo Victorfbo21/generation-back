@@ -476,6 +476,27 @@ export default class UserService {
         return inValidTypes
     }
 
+    async deleteWorker(workerId : string){
+
+        const deleted = await this.userRepository.deleteWorker(workerId)
+
+        if(!deleted){
+            return new AppResponse({
+                data : null,
+                error : true,
+                statusCode : 500,
+                message : 'Erro ao Excluir Colaborador'
+            })
+        }
+
+        return new AppResponse({
+            data : deleted,
+            error : false,
+            statusCode : 200,
+            message : 'Colaborador Deletado com Sucesso!'
+        })
+    }
+
 
 }
 
